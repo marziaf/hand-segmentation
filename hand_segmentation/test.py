@@ -1,5 +1,6 @@
 # TensorFlow and tf.keras
 
+import keras
 from keras.layers import *
 from keras.models import Model
 
@@ -19,35 +20,45 @@ from os import path as op
 
 
 # Network components
-def conv_block(input_tensor, num_filters):
-    encoder = Conv2D(num_filters, (2, 2), padding='same')(input_tensor)
+def conv_block(input_tensor, num_filters, kernel_size=3):
+    # First layer
+    encoder = Conv2D(filters=num_filters, kernel_size=(kernel_size, kernel_size), padding='same')(input_tensor)
     encoder = BatchNormalization()(encoder)
     encoder = Activation('relu')(encoder)
-    encoder = Conv2D(num_filters, (2, 2), padding='same')(encoder)
+    # Second layer
+    encoder = Conv2D(filters=num_filters, kernel_size=(kernel_size, kernel_size), padding='same')(encoder)
     encoder = BatchNormalization()(encoder)
     encoder = Activation('relu')(encoder)
+
     return encoder
 
 
-def encoder_block(input_tensor, num_filters):
+def encoder_block(input_tensor, num_filters, pool_size=2, strides=2):
+    # Encoder
     encoder = conv_block(input_tensor, num_filters)
-    encoder_pool = MaxPooling2D((3, 3), strides=(2, 2))(encoder)
+    encoder_pool = MaxPooling2D(pool_size=(pool_size, pool_size), strides=(strides, strides))(encoder)
+
     return encoder_pool, encoder
 
 
-def decoder_block(input_tensor, concat_tensor, num_filters):
-    decoder = Conv2DTranspose(num_filters, (2, 2), strides=(2, 2), padding='same')(input_tensor)
+def decoder_block(input_tensor, concat_tensor, num_filters, kernel_size=3, transpose_kernel_size=2, strides=2):
+    # Conv2DTranspose AKA Deconvolution
+    decoder = Conv2DTranspose(filters=num_filters, kernel_size=(transpose_kernel_size, transpose_kernel_size),
+                              strides=(strides, strides), padding='same')(input_tensor)
+    # Concatenate
     decoder = concatenate([concat_tensor, decoder], axis=-1)
     decoder = BatchNormalization()(decoder)
     decoder = Activation('relu')(decoder)
-    decoder = Conv2D(num_filters, (2, 2), padding='same')(decoder)
+
+    decoder = Conv2D(num_filters, (kernel_size, kernel_size), padding='same')(decoder)
     decoder = BatchNormalization()(decoder)
     decoder = Activation('relu')(decoder)
-    decoder = Conv2D(num_filters, (2, 2), padding='same')(decoder)
+    decoder = Conv2D(num_filters, (kernel_size, kernel_size), padding='same')(decoder)
     decoder = BatchNormalization()(decoder)
     decoder = Activation('relu')(decoder)
     return decoder
 
+# ----------------------------------------------------------------------------------------------------------------------
 
 # PATHS
 project_root_path = op.relpath('../..')
@@ -68,21 +79,32 @@ print("Transposing tensors")
 mini_train = mini_train.transpose(3, 1, 2, 0)  # 126x200x200x4
 mini_target = mini_target.transpose(3, 1, 2, 0)
 
+
 # Define some parameters of the network
 img_shape = mini_train[:, :, :, 0].shape
-batch_size = 2  # random choice
-epochs = 3  # random choice
 
-# Network
+# ----------------------------------------------------------------------------------------------------------------------
+# MODEL DEFINITION
+
+base_n_filters = 32  # The "minimum" number of filters (filters in first encoder)
+# Input
 inputs = Input(shape=img_shape)
-
-encoder0_pool, encoder0 = encoder_block(inputs, 16)
-encoder1_pool, encoder1 = encoder_block(encoder0_pool, 32)
+# Encoders
+encoder0_pool, encoder0 = encoder_block(inputs, base_n_filters)  # 32 filters
+encoder1_pool, encoder1 = encoder_block(encoder0_pool, base_n_filters*2)  # 64
+encoder2_pool, encoder2 = encoder_block(encoder1_pool, base_n_filters*4)  # 128
+encoder3_pool, encoder3 = encoder_block(encoder2_pool, base_n_filters*8)  # 256
+encoder4_pool, encoder4 = encoder_block(encoder3_pool, base_n_filters*16)  # 512
 print("Encoders created")
-center = conv_block(encoder1_pool, 64)
+# Center
+center = conv_block(encoder4_pool, base_n_filters*32)  # 1024
 print("Center created")
-decoder1 = decoder_block(center, encoder1, 32)
-decoder0 = decoder_block(decoder1, encoder0, 16)
+# Decoders
+decoder4 = decoder_block(center, encoder4, base_n_filters*16)  # 512
+decoder3 = decoder_block(decoder4, encoder3, base_n_filters*8)  # 256
+decoder2 = decoder_block(decoder3, encoder2, base_n_filters*4)  # 128
+decoder1 = decoder_block(decoder2, encoder1, base_n_filters*2)  # 64
+decoder0 = decoder_block(decoder1, encoder0, base_n_filters)  # 32
 print("Decoders created")
 
 # outputs = Conv2D(1, (1, 1), activation='sigmoid')(decoder0)
