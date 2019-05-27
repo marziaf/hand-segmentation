@@ -77,14 +77,21 @@ print("Getting data")
 mini_train = sio.loadmat(op.join(mini_all_features_path, 'features_train.mat')).get('features_train')
 mini_target = sio.loadmat(op.join(mini_target_path, 'target_train.mat')).get('target_train')
 
+# target from uint8 to float64
+mini_target = mini_target*0.1
+# mini_train from dtype to float64
+mini_train = mini_train.astype(float)
+
 # Transpose to get NxMx4
 print("Transposing tensors")
 mini_train = mini_train.transpose(3, 1, 2, 0)  # 126x200x200x4
 mini_target = mini_target.transpose(3, 1, 2, 0)
 # TODO images should be shuffled and rotated
 
+
 #DEBUG
 mini_train = mini_train[:32, :, :, :]  # This is just a subset
+mini_target = mini_target[:32, :, :, :]
 
 # Define some parameters of the network
 img_shape = mini_train[:, :, :, 0].shape
@@ -117,6 +124,6 @@ decoder1 = decoder_block(decoder2, encoder1, base_n_filters*2)  # 64
 decoder0 = decoder_block(decoder1, encoder0, base_n_filters)  # 32
 print("Decoders created")
 
-# outputs = Conv2D(1, (1, 1), activation='sigmoid')(decoder0)
+outputs = Conv2D(1, (1, 1), activation='sigmoid')(decoder0)
 
-# model = Model(inputs=mini_train, outputs=mini_target)
+model = Model(inputs=[inputs], outputs=[outputs])
