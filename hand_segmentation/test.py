@@ -94,7 +94,7 @@ mini_train = mini_train[:32, :, :, :]  # This is just a subset
 mini_target = mini_target[:32, :, :, :]
 
 # Define some parameters of the network
-img_shape = mini_train[:, :, :, 0].shape
+img_shape = mini_train[0, :, :, :].shape
 
 # ----------------------------------------------------------------------------------------------------------------------
 # MODEL DEFINITION
@@ -124,6 +124,9 @@ decoder1 = decoder_block(decoder2, encoder1, base_n_filters*2)  # 64
 decoder0 = decoder_block(decoder1, encoder0, base_n_filters)  # 32
 print("Decoders created")
 
+# Output
 outputs = Conv2D(1, (1, 1), activation='sigmoid')(decoder0)
-
+# Create model
 model = Model(inputs=[inputs], outputs=[outputs])
+# Compile model
+model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])  # TODO custom dice loss (these were random choices)
