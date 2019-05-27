@@ -1,9 +1,10 @@
 # TensorFlow and tf.keras
+import tensorflow as tf
 
-import keras
+# import keras
 from keras.layers import *
 from keras.models import Model
-
+from keras import losses, models
 # Helper libraries
 
 import numpy as np
@@ -61,8 +62,27 @@ def decoder_block(input_tensor, concat_tensor, num_filters, kernel_size=3, trans
     decoder = Activation('relu')(decoder)
     return decoder
 
-# ----------------------------------------------------------------------------------------------------------------------
 
+# Custom metrics
+def dice_coeff(y_true, y_pred):
+    smooth = 1.
+    # Flatten
+    y_true_f = tf.reshape(y_true, [-1])
+    y_pred_f = tf.reshape(y_pred, [-1])
+    intersection = tf.reduce_sum(y_true_f * y_pred_f)
+    score = (2. * intersection + smooth) / (tf.reduce_sum(y_true_f) + tf.reduce_sum(y_pred_f) + smooth)
+    return score
+
+
+def dice_loss(y_true, y_pred):
+    loss = 1 - dice_coeff(y_true, y_pred)
+    return loss
+
+
+def bce_dice_loss(y_true, y_pred):
+    loss = losses.binary_crossentropy(y_true, y_pred) + dice_loss(y_true, y_pred)
+    return loss
+# ----------------------------------------------------------------------------------------------------------------------
 
 # PATHS
 project_root_path = op.relpath('../..')
@@ -71,6 +91,9 @@ data_root_path = op.join(project_root_path, 'data')
 mini_root_path = op.join(data_root_path, 'mini')
 mini_all_features_path = op.join(mini_root_path, 'all_features')
 mini_target_path = op.join(mini_root_path, 'target')
+# output model
+save_model_dir = op.join(project_root_path, 'models')
+save_model_path = op.join(save_model_dir, 'first_try.hdf5')
 
 # Get data
 print("Getting data")
@@ -84,14 +107,18 @@ mini_train = mini_train.astype(float)
 
 # Transpose to get NxMx4
 print("Transposing tensors")
-mini_train = mini_train.transpose(3, 1, 2, 0)  # 126x200x200x4
-mini_target = mini_target.transpose(3, 1, 2, 0)
+mini_train = mini_train.transpose(3, 0, 1, 2)  # 126x200x200x4
+mini_target = mini_target.transpose(3, 0, 1, 2)
 # TODO images should be shuffled and rotated
 
+# Some parameters
+sub_size = 32  # Number of training inputs
+batch_size = 2
+epochs = 5
 
-#DEBUG
-mini_train = mini_train[:32, :, :, :]  # This is just a subset
-mini_target = mini_target[:32, :, :, :]
+# DEBUG
+mini_train = mini_train[:sub_size, :, :, :]  # This is just a subset
+mini_target = mini_target[:sub_size, :, :, :]
 
 # Define some parameters of the network
 img_shape = mini_train[0, :, :, :].shape
@@ -129,4 +156,17 @@ outputs = Conv2D(1, (1, 1), activation='sigmoid')(decoder0)
 # Create model
 model = Model(inputs=[inputs], outputs=[outputs])
 # Compile model
-model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])  # TODO custom dice loss (these were random choices)
+model.compile(optimizer='adam', loss=bce_dice_loss, metrics=[dice_loss])
+
+print("Ready to start training")
+cp = tf.keras.callbacks.ModelCheckpoint(filepath=save_model_path, monitor='val_dice_loss',
+                                        save_best_only=True, verbose=1)
+history = model.fit(x=mini_train,
+                    y=mini_target,
+                    batch_size=batch_size,
+                    epochs=epochs,
+                    verbose=2,
+                    callbacks=[cp],
+                    validation_split=0.2)
+                    # TODO Consider shuffle
+
