@@ -69,4 +69,3 @@ labels_path = op.join(sets_root_path, 'labels.mat')
 
 # TEST
 f, l = get_data(features_path, labels_path, reduce_images=True)
-disp_some_data(f, l)

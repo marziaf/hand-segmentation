@@ -45,7 +45,6 @@ def encoder_block(input_tensor, num_filters, pool_size=2, strides=2):
     return encoder_pool, encoder
 
 
-# Decoder block
 def decoder_block(input_tensor, concat_tensor, num_filters, kernel_size=3, transpose_kernel_size=2, strides=2):
     # Conv2DTranspose AKA Deconvolution
     decoder = Conv2DTranspose(filters=num_filters, kernel_size=(transpose_kernel_size, transpose_kernel_size),
@@ -61,6 +60,7 @@ def decoder_block(input_tensor, concat_tensor, num_filters, kernel_size=3, trans
     decoder = BatchNormalization()(decoder)
     decoder = Activation('relu')(decoder)
     return decoder
+# Decoder block
 
 
 # Custom metrics
