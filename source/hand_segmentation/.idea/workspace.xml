@@ -40,7 +40,7 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/data_generator.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="262">
+            <state relative-caret-position="217">
               <caret line="59" selection-start-line="59" selection-end-line="59" />
               <folding>
                 <element signature="e#8#33#0" expanded="true" />
@@ -246,12 +246,12 @@
       <workItem from="1558950738577" duration="1386000" />
       <workItem from="1558952356882" duration="11895000" />
       <workItem from="1559024700110" duration="613000" />
-      <workItem from="1559071407929" duration="10643000" />
+      <workItem from="1559071407929" duration="11060000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="53756000" />
+    <option name="totallyTimeSpent" value="54173000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -263,7 +263,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="554" y="0" width="812" height="745" extended-state="4" />
+    <frame x="0" y="-1" width="1366" height="746" extended-state="6" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49444443" weight="0.108333334" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -280,11 +280,11 @@
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50151515" side_tool="true" weight="0.17041801" />
       <window_info anchor="bottom" id="Terminal" order="11" weight="0.33118972" />
-      <window_info anchor="bottom" id="Python Console" order="12" sideWeight="0.49848485" visible="true" weight="0.40257648" />
+      <window_info anchor="bottom" id="Python Console" order="12" sideWeight="0.49848485" visible="true" weight="0.40192926" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info active="true" anchor="right" id="SciView" order="3" visible="true" weight="0.83420366" />
+      <window_info active="true" anchor="right" x="0" y="27" width="1366" height="718" id="SciView" maximized="true" order="3" type="WINDOWED" visible="true" weight="0.4840909" />
       <window_info anchor="right" x="0" y="0" width="160" height="546" id="Documentation" order="4" side_tool="true" weight="0.19924243" />
       <window_info anchor="right" id="Database" order="5" />
     </layout>
@@ -363,7 +363,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/data_generator.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="262">
+        <state relative-caret-position="217">
           <caret line="59" selection-start-line="59" selection-end-line="59" />
           <folding>
             <element signature="e#8#33#0" expanded="true" />
