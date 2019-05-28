@@ -55,20 +55,19 @@ def disp_data_comparison(dataset, num_rows=3, num_cols=3):
 
     fig = plt.figure(figsize=(20, 10))
     outer = gridspec.GridSpec(num_rows, num_cols, wspace=0.2, hspace=0.2)
-    tot_images = int(dataset.shape[0])
 
     for i in range(num_rows*num_cols):
-        imgs, label = tf.keras.backend.get_session().run(next_element)
+        imgs, labs = tf.keras.backend.get_session().run(next_element)
         img = imgs[0]
+        lab = labs[0]
         inner = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=outer[i], wspace=0.1, hspace=0.1)
-        inx = random.randint(0, tot_images-1)
 
         ax = fig.add_subplot(inner[0])
-        ax.imshow(dataset1[inx, :, :, :])
+        ax.imshow(img)
         ax.axis('off')
         ax = fig.add_subplot(inner[1])
         ax.axis('off')
-        ax.imshow(dataset2[inx, :, :, :])
+        ax.imshow(lab)
         fig.add_subplot(ax)
 
     fig.show()
@@ -85,4 +84,4 @@ labels_path = op.join(sets_root_path, 'labels.mat')
 # TEST
 # f, l = __get_np_array(features_path, labels_path, reduce_images=True)
 data = get_data(features_path, labels_path)
-#disp_data_comparison(data)
+disp_data_comparison(data)
