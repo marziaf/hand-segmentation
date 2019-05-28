@@ -58,14 +58,3 @@ def disp_some_data(feat, lab):
 
     fig.show()
 
-
-# PATHS
-project_root_path = op.relpath('../..')
-data_root_path = op.join(project_root_path, 'data')
-# mini
-sets_root_path = op.join(data_root_path, 'sets')
-features_path = op.join(sets_root_path, 'features.mat')
-labels_path = op.join(sets_root_path, 'labels.mat')
-
-# TEST
-f, l = get_data(features_path, labels_path, reduce_images=True)
