@@ -16,8 +16,13 @@ import random
 # Uploads data from mat file to numpy array
 # Reduce arrays sizes by reduce_images and reduction_factor
 # Returns features, labels as numpy arrays
+from scipy import ndimage
+
+
 def get_data(feat_path, lab_path, feat_variable='features', lab_variable='labels',
                    reduce_images=False, reduction_factor=0.3):
+    # feat_variable = 'test_features' for test features
+    # lab_variable = 'test_target'
     # Import data
     print("Importing data")
     features = sio.loadmat(feat_path).get(feat_variable)
@@ -37,6 +42,13 @@ def get_data(feat_path, lab_path, feat_variable='features', lab_variable='labels
     return features, labels
 
 
+def data_augmentation(images):  # TODO
+    for i in range(0, int(images.shape[0])):
+        deg = random.randint(0, 359)
+        images[i, :, :, :] = ndimage.rotate(images[i, :, :, :], deg, reshape=False)
+
+
+# Shows comparison between random couples of features and labels
 def disp_some_data(feat, lab):
 
     fig = plt.figure(figsize=(20, 10))
