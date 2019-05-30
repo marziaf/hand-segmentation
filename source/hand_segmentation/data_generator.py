@@ -39,13 +39,16 @@ def get_data(feat_path, lab_path, feat_variable='features', lab_variable='labels
         features = features[:int(num_img*reduction_factor), :, :, :]
         labels = labels[:int(num_img*reduction_factor), :, :, :]
 
+    print('Transforming data')
+    data_augmentation(features, labels)
     return features, labels
 
 
-def data_augmentation(images):  # TODO
-    for i in range(0, int(images.shape[0])):
+def data_augmentation(feat, lab):  # TODO
+    for i in range(0, int(feat.shape[0])):
         deg = random.randint(0, 359)
-        images[i, :, :, :] = ndimage.rotate(images[i, :, :, :], deg, reshape=False)
+        feat[i, :, :, :] = ndimage.rotate(feat[i, :, :, :], deg, reshape=False)
+        lab[i, :, :, :] = ndimage.rotate(lab[i, :, :, :], deg, reshape=False)
 
 
 # Shows comparison between random couples of features and labels

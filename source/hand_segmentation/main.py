@@ -22,10 +22,10 @@ test_labels_path = op.join(sets_root_path, 'test_labels.mat')
 
 # output model paths
 save_model_dir = op.join(project_root_path, 'models')
-save_model_path = op.join(save_model_dir, 'second_try.hdf5')
+save_model_path = op.join(save_model_dir, 'third_try.hdf5')
 
 # Obtain data
-features, labels = get_data(features_path, labels_path, reduce_images=True)
+features, labels = get_data(features_path, labels_path, reduce_images=True, reduction_factor=0.1)
 im_size = features.shape[1:4]
 
 # Get model
@@ -40,7 +40,7 @@ cp = tf.keras.callbacks.ModelCheckpoint(filepath=save_model_path, monitor='val_d
                                         save_best_only=True, verbose=1)
 
 batch_size = 3
-epochs = 10
+epochs = 5
 history = model.fit(x=features,
                     y=labels,
                     batch_size=batch_size,
