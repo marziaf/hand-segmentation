@@ -6,6 +6,7 @@ from scipy import ndimage
 
 # Tensorflow
 import tensorflow as tf
+from keras import utils
 
 # Plots
 import numpy as np
@@ -40,6 +41,8 @@ def get_data(feat_path, lab_path, feat_variable='features', lab_variable='labels
         features = features[:int(num_img*reduction_factor), :, :, :]
         labels = labels[:int(num_img*reduction_factor), :, :, :]
 
+    labels = utils.to_categorical(labels) # TODO non c'è più compatibilità con altre funzioni mettendolo qui!
+
     # print('Transforming data')
     # data_augmentation(features, labels)
     return features, labels
@@ -53,7 +56,7 @@ def data_augmentation(feat, lab):  # TODO
 
 
 # Shows comparison between random couples of features and labels
-def disp_some_data(feat, lab):
+def disp_some_data(feat, lab):  # TODO argmax to reverse to_categorical ( np.argmax(guess, axis=-1))
 
     fig = plt.figure(figsize=(20, 10))
     outer = gridspec.GridSpec(3, 3, wspace=0.2, hspace=0.2)
@@ -69,7 +72,7 @@ def disp_some_data(feat, lab):
         ax.axis('off')
         ax = fig.add_subplot(inner[1])
         ax.axis('off')
-        ax.imshow(lab[inx, :, :, 0])
+        ax.imshow(lab[inx, :, :])
         fig.add_subplot(ax)
 
     fig.show()

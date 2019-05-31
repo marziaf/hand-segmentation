@@ -12,10 +12,10 @@ from keras import models
 # %% Input parsing
 # TODO: fix parser adding other inputs (e.g. learning rate, optimizer,...)
 parser = argparse.ArgumentParser()
-
-parser.add_argument("--epochs", type=int, default=10)
+# TODO cambiare parametri prima allenamento
+parser.add_argument("--epochs", type=int, default=5)
 parser.add_argument("--batch_size", type=int, default=3)
-parser.add_argument("--patience", type=int, default=10)
+parser.add_argument("--patience", type=int, default=1)
 
 args = parser.parse_args()
 
@@ -25,7 +25,7 @@ patience = args.patience
 
 
 # Obtain data
-features, labels = get_data(features_path, labels_path, reduce_images=False)
+features, labels = get_data(features_path, labels_path, reduce_images=True, reduction_factor=0.1)  # TODO don't reduce if possible
 im_size = features.shape[1:4]
 
 # Get model

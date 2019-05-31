@@ -54,7 +54,6 @@ def __decoder_block(input_tensor, concat_tensor, num_filters, kernel_size=3, tra
 # CUSTOM METRICS
 
 def dice_coeff(y_true, y_pred):
-    y_true = utils.to_categorical(y_true)
     smooth = 1.
     # Flatten
     y_true_f = tf.reshape(y_true, [-1])

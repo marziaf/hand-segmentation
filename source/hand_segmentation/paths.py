@@ -9,5 +9,5 @@ features_path = op.join(sets_root_path, 'features.mat')
 labels_path = op.join(sets_root_path, 'labels.mat')
 # output model paths
 save_model_dir = op.join(project_root_path, 'models')
-save_model_path = op.join(save_model_dir, 'third_try.hdf5')
+save_model_path = op.join(save_model_dir, 'fourth_try.hdf5')  # TODO check existing files and name progressively
 
