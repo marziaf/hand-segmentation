@@ -1,7 +1,8 @@
 # Paths
-from os import path as op
+from paths import *
 # Matlab file reader
 import scipy.io as sio
+from scipy import ndimage
 
 # Tensorflow
 import tensorflow as tf
@@ -31,7 +32,7 @@ def get_data(feat_path, lab_path, feat_variable='features', lab_variable='labels
     # Transpose in N x M x #Channels x #Set
     print("Transposing tensors")
     features = features.transpose(3, 0, 1, 2)  # 168x256x256x4
-    labels = labels.transpose(3, 0, 1, 2)
+    labels = labels.transpose(3, 0, 1, 2).astype(int)
     num_img = int(features.shape[0])
 
     # If asked to, reduce the number of images
@@ -39,8 +40,8 @@ def get_data(feat_path, lab_path, feat_variable='features', lab_variable='labels
         features = features[:int(num_img*reduction_factor), :, :, :]
         labels = labels[:int(num_img*reduction_factor), :, :, :]
 
-    print('Transforming data')
-    data_augmentation(features, labels)
+    # print('Transforming data')
+    # data_augmentation(features, labels)
     return features, labels
 
 

@@ -2,6 +2,8 @@
 from keras.layers import *
 from keras.models import Model
 from keras import losses
+from keras import utils
+from keras.utils import to_categorical
 
 import tensorflow as tf
 
@@ -52,6 +54,7 @@ def __decoder_block(input_tensor, concat_tensor, num_filters, kernel_size=3, tra
 # CUSTOM METRICS
 
 def dice_coeff(y_true, y_pred):
+    y_true = utils.to_categorical(y_true)
     smooth = 1.
     # Flatten
     y_true_f = tf.reshape(y_true, [-1])
@@ -66,8 +69,8 @@ def dice_loss(y_true, y_pred):
     return loss
 
 
-def bce_dice_loss(y_true, y_pred):
-    loss = losses.binary_crossentropy(y_true, y_pred) + dice_loss(y_true, y_pred)
+def ce_dice_loss(y_true, y_pred):
+    loss = losses.categorical_crossentropy(y_true, y_pred) + dice_loss(y_true, y_pred)
     return loss
 
 
@@ -101,7 +104,7 @@ def get_unet_model(img_shape):
     print("Decoders created")
 
     # Output
-    outputs = Conv2D(1, (1, 1), activation='sigmoid')(decoder0)
+    outputs = Conv2D(9, (1, 1), activation='softmax')(decoder0)
 
     # Create model
     model = Model(inputs=[inputs], outputs=[outputs])
