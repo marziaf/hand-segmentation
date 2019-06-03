@@ -12,10 +12,10 @@ from keras import models
 # %% Input parsing
 # TODO: fix parser adding other inputs (e.g. learning rate, optimizer,...)
 parser = argparse.ArgumentParser()
-# TODO cambiare parametri prima allenamento
-parser.add_argument("--epochs", type=int, default=5)
-parser.add_argument("--batch_size", type=int, default=3)
-parser.add_argument("--patience", type=int, default=1)
+# TODO optimize parameters
+parser.add_argument("--epochs", type=int, default=50)
+parser.add_argument("--batch_size", type=int, default=15)
+parser.add_argument("--patience", type=int, default=10)
 
 args = parser.parse_args()
 
@@ -67,7 +67,8 @@ model.fit(x=features,
           epochs=epochs,
           verbose=2,
           callbacks=callbacks,
-          validation_split=0.2)
+          validation_split=0.2,
+          shuffle=True)
 
 # %% TODO: Evaluate performance  (sample code to modify)
 # y_hat = m.predict(x_test)

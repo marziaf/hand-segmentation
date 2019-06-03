@@ -23,8 +23,6 @@ from scipy import ndimage
 
 def get_data(feat_path, lab_path, feat_variable='features', lab_variable='labels',
                    reduce_images=False, reduction_factor=0.3):
-    # feat_variable = 'test_features' for test features
-    # lab_variable = 'test_target'
     # Import data
     print("Importing data")
     features = sio.loadmat(feat_path).get(feat_variable)
@@ -41,7 +39,7 @@ def get_data(feat_path, lab_path, feat_variable='features', lab_variable='labels
         features = features[:int(num_img*reduction_factor), :, :, :]
         labels = labels[:int(num_img*reduction_factor), :, :, :]
 
-    labels = utils.to_categorical(labels) # TODO non c'è più compatibilità con altre funzioni mettendolo qui!
+    labels = utils.to_categorical(labels)
 
     # print('Transforming data')
     # data_augmentation(features, labels)
@@ -57,6 +55,8 @@ def data_augmentation(feat, lab):  # TODO
 
 # Shows comparison between random couples of features and labels
 def disp_some_data(feat, lab):  # TODO argmax to reverse to_categorical ( np.argmax(guess, axis=-1))
+    # Get a "displayable" array
+    lab = np.argmax(lab, axis=-1)
 
     fig = plt.figure(figsize=(20, 10))
     outer = gridspec.GridSpec(3, 3, wspace=0.2, hspace=0.2)
