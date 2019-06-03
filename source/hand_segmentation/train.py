@@ -24,9 +24,11 @@ batch_size = args.batch_size
 patience = args.patience
 
 
-# Obtain data
+# %% Obtain data
 features, labels = get_data(features_path, labels_path, reduce_images=True, reduction_factor=0.1)  # TODO don't reduce if possible
 im_size = features.shape[1:4]
+
+# %% Model
 
 # Get model
 model = get_unet_model(im_size)
@@ -34,33 +36,30 @@ model = get_unet_model(im_size)
 # Compile
 # As metrics we would like the pixel accuracy rather than the loss.
 # Adam is ok, you might want to try other optimizers (e.g. SGD, Adagrad/Adadelta,...) and different learning rates.
-# To specify the lr, need to create an optimizer object
+# To specify the lr, need to create an optimizer object TODO
 model.compile(optimizer='adam', loss=ce_dice_loss, metrics=['accuracy'])
 
 # Train
 print("Ready to start training")
 cp = tf.keras.callbacks.ModelCheckpoint(filepath=save_model_path, save_best_only=True, verbose=1)
 
+# Callbacks
+
 # TODO: visualize learning via tensorboard (tensorboard --logdir 'tb/xxx' --port 6001)
 callbacktb = tf.keras.callbacks.TensorBoard(log_dir="tb",
                                             histogram_freq=0,
                                             write_graph=True,
-                                            write_images=False)
-                                            # update_freq='batch')
+                                            write_images=False,
+                                            update_freq='batch')
 
-# TODO: add restore_best_weights (maybe update to tf 1.13)
 early_stop = tf.keras.callbacks.EarlyStopping(patience=patience,
-                                              min_delta=0)  # restore_best_weights=True)
+                                              min_delta=0,
+                                              restore_best_weights=True)
 
 callbacks = [callbacktb, early_stop, cp]
 
-# I would suggest to split the data in advance and then use them always with the same split, for example:
-'''model.fit(x=x_train,
-      y=y_train,
-      batch_size=train_batch_size,
-      validation_data=(x_val, y_val),
-      epochs=epochs,
-      callbacks=callbacks)'''
+# Fit
+
 model.fit(x=features,
           y=labels,
           batch_size=batch_size,

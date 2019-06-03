@@ -41,8 +41,6 @@ def get_data(feat_path, lab_path, feat_variable='features', lab_variable='labels
 
     labels = utils.to_categorical(labels)
 
-    # print('Transforming data')
-    # data_augmentation(features, labels)
     return features, labels
 
 
@@ -54,11 +52,12 @@ def data_augmentation(feat, lab):  # TODO
 
 
 # Shows comparison between random couples of features and labels
-def disp_some_data(feat, lab):  # TODO argmax to reverse to_categorical ( np.argmax(guess, axis=-1))
+def disp_some_data(feat, lab, save_image=False, image_save_path=save_output_images_path):
     # Get a "displayable" array
     lab = np.argmax(lab, axis=-1)
 
-    fig = plt.figure(figsize=(20, 10))
+    fig_size = 10
+    fig = plt.figure(figsize=(fig_size*2, fig_size))
     outer = gridspec.GridSpec(3, 3, wspace=0.2, hspace=0.2)
     tot_images = int(feat.shape[0])
 
@@ -74,6 +73,9 @@ def disp_some_data(feat, lab):  # TODO argmax to reverse to_categorical ( np.arg
         ax.axis('off')
         ax.imshow(lab[inx, :, :])
         fig.add_subplot(ax)
+
+    #if save_image:
+    #    fig.savefig(image_save_path)
 
     fig.show()
 
