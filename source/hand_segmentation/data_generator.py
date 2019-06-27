@@ -52,17 +52,14 @@ def data_augmentation(feat, lab):  # TODO
 
 
 # Shows comparison between random couples of features and labels
-def disp_some_data(feat, lab):
-    print("sikfsedugbdffjb")
+def disp_some_data(feat, lab, save_image=False, save_path=save_output_images_path, fig_size=30):
     # Get a "displayable" array
     lab = np.argmax(lab, axis=-1)
 
-    fig_size = 10
     fig = plt.figure(figsize=(fig_size*2, fig_size))
     outer = gridspec.GridSpec(3, 3, wspace=0.2, hspace=0.2)
     tot_images = int(feat.shape[0])
 
-    print("Ready")
     for i in range(9):
         inner = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=outer[i],
                                                  wspace=0.1, hspace=0.1)
@@ -76,6 +73,7 @@ def disp_some_data(feat, lab):
         ax.imshow(lab[inx, :, :])
         fig.add_subplot(ax)
 
-    print("ready to show")
     fig.show()
 
+    if save_image:
+        fig.savefig(save_path)

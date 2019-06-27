@@ -20,4 +20,4 @@ prediction = model.predict(test_features)
 
 # del model  # TODO use if needed to free memory
 
-disp_some_data(test_features, prediction)
+disp_some_data(test_features, prediction, save_image=True, fig_size=20)
