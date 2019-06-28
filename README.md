@@ -8,7 +8,9 @@
 		* 2.1.1. [Convoluzione](#Convoluzione)
 		* 2.1.2. [Max pooling](#Maxpooling)
 * 3. [ U-Net](#U-Net)
-	* 3.1. [Percorso contrattore //TODO no, dai, in italiano non si può sentire](#PercorsocontrattoreTODOnodaiinitalianononsipusentire)
+	* 3.1. [ Contrazione](#Contrazione)
+		* 3.1.1. [ReLU](#ReLU)
+	* 3.2. [Espansione](#Espansione)
 * 4. [Data generation](#Datageneration)
 * 5. [Fonti](#Fonti)
 
@@ -75,19 +77,27 @@ A questo scopo interviene l'*upsampling*, per invertire la procedura di condensa
 
 La struttura che è stata scelta per la rete è una U-Net, sviluppata da Olaf Ronneberger per l'analisi di immagini biomediche. La rete si presta bene al problema per via della sua struttura a encoder-decoder che permette prima di comprimere e successivamente espandere il tensore in ingresso per le finalità sopra citate.
 
-###  3.1. <a name='PercorsocontrattoreTODOnodaiinitalianononsipusentire'></a>Percorso contrattore //TODO no, dai, in italiano non si può sentire
+![unet](images_for_presentation/unet.jpg)
 
-La prima parte della rete ad essere attraversata è quella di contrazione. Qui 4 blocchi codificatori (*encoder*) si susseguono concatentati uno all'altro per concentrare l'informazione. //TODO
+###  3.1. <a name='Contrazione'></a> Contrazione
 
-Un encoder è costituito da diversi livelli, tra cui di convoluzione e di attivazione.
+La prima parte della rete ad essere attraversata è quella di contrazione. Qui 4 blocchi codificatori (*encoder*) si susseguono concatentati uno all'altro.
 
-#### ReLU
+Un encoder è costituito da diversi livelli, tra cui di convoluzione, attivazione e pooling.
+
+####  3.1.1. <a name='ReLU'></a>ReLU
 
 Per spiegare in cosa consistono i livelli di attivazione è necessario comprendere le componenti "atomiche" di ogni rete neurale: i *neuroni*.
 
 Un neurone è l'elemento elementare della rete, di cui i livelli sono composti. Ha lo scopo di valutare l'input pesato e a cui viene applicato un bias e a seconda del valore ottenuto decidere se attivarsi. //TODO
 
 Una funzione di attivazione molto comune nei modelli di deep learning è la *Rectified Linear Unit*, o *ReLU*, ed è stata impiegata anche in questo contesto. Viene descritta da `f(x) = max(0,x)` e nonostante la sua semplicità è molto efficace: a differenza della altrettanto nota tangente iperbolica, l'allenamento è più efficiente e rapido, adatto a computazioni complesse.
+
+###  3.2. <a name='Espansione'></a>Espansione
+
+Successivamente alla contrazione, dopo aver attraversato un nodo centrale, il tensore attraversa l'ultimo ramo della rete, in cui la sua dimensione viene ripristinata a quella iniziale passando attraverso i *decoder*.
+
+La simmetria della rete rende superflua una discussione approfondita dei decoder. Tuttavia questi ricevono in input non solo il tensore rappresentativo dell'immagine: infatti avviene anche una concatenazione tra encoder e decoder corrispondente (operanti allo stesso "livello") per inglobare anche l'informazione riguardante il contesto.
 
 
 // TODO parlare di 
