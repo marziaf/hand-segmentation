@@ -7,10 +7,10 @@
 	* 2.1. [Il problema della segmentazione semantica](#Ilproblemadellasegmentazionesemantica)
 		* 2.1.1. [Convoluzione](#Convoluzione)
 		* 2.1.2. [Max pooling](#Maxpooling)
-		* 2.1.3. [Up sampling](#Upsampling)
-	* 2.2. [UNET](#UNET)
-* 3. [Data generation](#Datageneration)
-* 4. [Fonti](#Fonti)
+* 3. [ U-Net](#U-Net)
+	* 3.1. [Percorso contrattore //TODO no, dai, in italiano non si può sentire](#PercorsocontrattoreTODOnodaiinitalianononsipusentire)
+* 4. [Data generation](#Datageneration)
+* 5. [Fonti](#Fonti)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
@@ -61,25 +61,45 @@ L'output che viene generato ha dimensione *n<sub>out</sub>\*n<sub>out</sub>\*k*,
 
 ####  2.1.2. <a name='Maxpooling'></a>Max pooling
 
-L'informazione, così come fornita in input, non è esaminabile immediatamente, in quanto non è possibile avere una visione d'insieme di uno volume così ampio. L'idea di fondo è quella di ridurre le informazioni da analizzare, mantenendo solo le più importanti (i pixel con i valori massimi) per ogni regione.
+L'informazione, così come fornita in input, non è esaminabile immediatamente, in quanto non è possibile avere una visione d'insieme di uno volume così ampio. L'idea di fondo è quella di ridurre le informazioni da analizzare, mantenendo solo le più importanti (nel caso del max pooling, i pixel con i valori massimi) per ogni regione.
 
-Mediante il *pooling* ad ogni livello i filtri diventano sempre più consci del contesto complessivo dell'immagine, in quanto questa è sempre più concentrata in poco spazio e diventa analizzabile da un singolo filtro. Grazie a questa procedura, quindi, è possibile analizzare l'immagine nella sua interezza, rendendo più chiaro *cosa* rappresenta, ma perdendo l'informazione sul *dove* i pixel si trovassero nell'input.
+![max_pooling](images_for_presentation/max_pooling.png)
 
-Si deve osservare come però, per il problema di segmentazione questo possa sembrare controproducente: è infatti fondamentale ripristinare l'informazione spaziale. A questo scopo interviene l'*upsampling*.
+Mediante il *pooling*, ad ogni livello i filtri diventano sempre più consci del contesto complessivo dell'immagine, in quanto questa è sempre più concentrata in poco spazio e diventa analizzabile da un singolo filtro. Grazie a questa procedura, quindi, è possibile analizzare l'immagine nella sua interezza, rendendo più chiaro *cosa* rappresenta, ma perdendo l'informazione sul *dove* i pixel si trovassero nell'input. Le procedure che vengono eseguite sono lecite nelle reti convoluzionali in virtù dell'invarianza alla traslazione delle componenti elementari di cui si compongono: non è la posizione assoluta a contare, ma quella relativa.
 
-####  2.1.3. <a name='Upsampling'></a>Up sampling
+Si deve osservare come però, per il problema di segmentazione, questo possa sembrare controproducente: è infatti fondamentale ripristinare l'informazione spaziale.
+
+A questo scopo interviene l'*upsampling*, per invertire la procedura di condensamento e riportare i risultati alle coordinate originali. Una tecnica che discende naturalmente dalla convoluzione è la *deconvoluzione*, o *backwards convolution*, che semplicemente è la sua inversione.
+
+##  3. <a name='U-Net'></a> U-Net
+
+La struttura che è stata scelta per la rete è una U-Net, sviluppata da Olaf Ronneberger per l'analisi di immagini biomediche. La rete si presta bene al problema per via della sua struttura a encoder-decoder che permette prima di comprimere e successivamente espandere il tensore in ingresso per le finalità sopra citate.
+
+###  3.1. <a name='PercorsocontrattoreTODOnodaiinitalianononsipusentire'></a>Percorso contrattore //TODO no, dai, in italiano non si può sentire
+
+La prima parte della rete ad essere attraversata è quella di contrazione. Qui 4 blocchi codificatori (*encoder*) si susseguono concatentati uno all'altro.
+
+Un encoder è costituito da diversi livelli, tra cui di convoluzione e di attivazione.
+
+#### ReLU
+
+Una funzione di attivazione molto comune nei modelli di deep learning è la *Rectified Linear Unit*, o *ReLU*
 
 
-###  2.2. <a name='UNET'></a>UNET
+// TODO parlare di 
+backpropagation
+gradient descent
+generazione dei dati
+differenza dati reali e artificiali
+depth map
+parametri da scegliere
+...
 
-
-
-
-##  3. <a name='Datageneration'></a>Data generation
+##  4. <a name='Datageneration'></a>Data generation
 e ricordarsi di depth map
 
 
-##  4. <a name='Fonti'></a>Fonti
+##  5. <a name='Fonti'></a>Fonti
 
 Fonti valide
 
@@ -88,6 +108,8 @@ Fonti valide
 - Encoder-Decoder with Atrous Separable Convolution for Semantic Image Segmentation - Liang-Chieh Chen, Yukun Zhu,George Papandreou, Florian Schroff, and Hartwig Adam
 
 - Fully Convolutional Networks for Semantic Segmentation - Jonathan Long, Evan Shelhamer, Trevor Darrell, UC Berkeley
+
+- U-Net: Convolutional Networks for Biomedial Image Segmentation - Olaf Ronneberger, Philipp Fischer, and Thomas Brox
 
 Fonti scarse
 - https://towardsdatascience.com/review-fcn-semantic-segmentation-eb8c9b50d2d1
