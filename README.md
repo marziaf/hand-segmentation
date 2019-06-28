@@ -77,13 +77,17 @@ La struttura che è stata scelta per la rete è una U-Net, sviluppata da Olaf Ro
 
 ###  3.1. <a name='PercorsocontrattoreTODOnodaiinitalianononsipusentire'></a>Percorso contrattore //TODO no, dai, in italiano non si può sentire
 
-La prima parte della rete ad essere attraversata è quella di contrazione. Qui 4 blocchi codificatori (*encoder*) si susseguono concatentati uno all'altro.
+La prima parte della rete ad essere attraversata è quella di contrazione. Qui 4 blocchi codificatori (*encoder*) si susseguono concatentati uno all'altro per concentrare l'informazione. //TODO
 
 Un encoder è costituito da diversi livelli, tra cui di convoluzione e di attivazione.
 
 #### ReLU
 
-Una funzione di attivazione molto comune nei modelli di deep learning è la *Rectified Linear Unit*, o *ReLU*
+Per spiegare in cosa consistono i livelli di attivazione è necessario comprendere le componenti "atomiche" di ogni rete neurale: i *neuroni*.
+
+Un neurone è l'elemento elementare della rete, di cui i livelli sono composti. Ha lo scopo di valutare l'input pesato e a cui viene applicato un bias e a seconda del valore ottenuto decidere se attivarsi. //TODO
+
+Una funzione di attivazione molto comune nei modelli di deep learning è la *Rectified Linear Unit*, o *ReLU*, ed è stata impiegata anche in questo contesto. Viene descritta da `f(x) = max(0,x)` e nonostante la sua semplicità è molto efficace: a differenza della altrettanto nota tangente iperbolica, l'allenamento è più efficiente e rapido, adatto a computazioni complesse.
 
 
 // TODO parlare di 
@@ -115,3 +119,4 @@ Fonti scarse
 - https://towardsdatascience.com/review-fcn-semantic-segmentation-eb8c9b50d2d1
 - https://towardsdatascience.com/understanding-semantic-segmentation-with-unet-6be4f42d4b47
 - https://towardsdatascience.com/intuitively-understanding-convolutions-for-deep-learning-1f6f42faee1
+- https://www.kaggle.com/dansbecker/rectified-linear-units-relu-in-deep-learning
