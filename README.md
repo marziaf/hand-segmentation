@@ -6,6 +6,8 @@
 * 2. [La rete neurale](#Lareteneurale)
 	* 2.1. [Il problema della segmentazione semantica](#Ilproblemadellasegmentazionesemantica)
 		* 2.1.1. [Convoluzione](#Convoluzione)
+		* 2.1.2. [Max pooling](#Maxpooling)
+		* 2.1.3. [Up sampling](#Upsampling)
 	* 2.2. [UNET](#UNET)
 * 3. [Data generation](#Datageneration)
 * 4. [Fonti](#Fonti)
@@ -47,16 +49,25 @@ Questa procedura, tuttavia, non è adatta allo scopo qui trattato: infatti l'inf
 
 ![classificazione](images_for_presentation/deconvolution.jpg)
 
-Prima di trattare nello specifico la rete adattata, è necessario conoscere i blocchi e le operazioni di cui si compone, che verranno quindi brevemente esposti.
+Prima di trattare nello specifico la rete adottata, è necessario conoscere i blocchi e le operazioni di cui si compone, che verranno quindi brevemente esposti.
 
 ####  2.1.1. <a name='Convoluzione'></a>Convoluzione
 
-L'input dell'operazione di convoluzione consiste in una matrice tridimensionale (un volume) di taglia *n<sub>\*in</sub>\*n<sub>in</sub>\*channels* denominata anche *campo ricettivo*. A compiere la manipolazione dell'input sono *k* filtri *f\*f\*channels*.
+L'input dell'operazione di convoluzione consiste in una matrice tridimensionale (un volume) di taglia *n<sub>\*in</sub>\*n<sub>in</sub>\*channels*. A compiere la manipolazione dell'input sono *k* filtri *f\*f\*channels*.
+
+La funzione dei filtri, collezioni *kernel*, è quella di scorrere lungo la matrice in input, compiendo l'operazione di convoluzione e generando in output una matrice riportante una forma di compressione locale delle informazioni originali. Ogni kernel agisce in modo indipendente sul relativo canale dell'immagine e l'output del filtro è la combinazione di questi.
+
 L'output che viene generato ha dimensione *n<sub>out</sub>\*n<sub>out</sub>\*k*, che dipende dai due fattori: ![nout](images_for_presentation/nout_inline.png) dove *p* rappresenta la dimensione di *padding* della convoluzione e *s* lo *stride*.
 
-#### Max pooling
+####  2.1.2. <a name='Maxpooling'></a>Max pooling
 
+L'informazione, così come fornita in input, non è esaminabile immediatamente, in quanto non è possibile avere una visione d'insieme di uno volume così ampio. L'idea di fondo è quella di ridurre le informazioni da analizzare, mantenendo solo le più importanti (i pixel con i valori massimi) per ogni regione.
 
+Mediante il *pooling* ad ogni livello i filtri diventano sempre più consci del contesto complessivo dell'immagine, in quanto questa è sempre più concentrata in poco spazio e diventa analizzabile da un singolo filtro. Grazie a questa procedura, quindi, è possibile analizzare l'immagine nella sua interezza, rendendo più chiaro *cosa* rappresenta, ma perdendo l'informazione sul *dove* i pixel si trovassero nell'input.
+
+Si deve osservare come però, per il problema di segmentazione questo possa sembrare controproducente: è infatti fondamentale ripristinare l'informazione spaziale. A questo scopo interviene l'*upsampling*.
+
+####  2.1.3. <a name='Upsampling'></a>Up sampling
 
 
 ###  2.2. <a name='UNET'></a>UNET
@@ -81,3 +92,4 @@ Fonti valide
 Fonti scarse
 - https://towardsdatascience.com/review-fcn-semantic-segmentation-eb8c9b50d2d1
 - https://towardsdatascience.com/understanding-semantic-segmentation-with-unet-6be4f42d4b47
+- https://towardsdatascience.com/intuitively-understanding-convolutions-for-deep-learning-1f6f42faee1
