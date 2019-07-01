@@ -150,6 +150,12 @@ Fonti valide
 
 - U-Net: Convolutional Networks for Biomedial Image Segmentation - Olaf Ronneberger, Philipp Fischer, and Thomas Brox
 
+- Generalised Wasserstein Dice Score for Imbalanced Multi-class Segmentation using Holistic Convolutional Networks - Lucas Fidon,Wenqi Li, Luis C. Garcia-Peraza-Herrera, Jinendra Ekanayake, Neil Kitchen,Sébastien Ourselin, and Tom Vercauteren
+
+- EddyNet: A Deep Neural Network For Pixel-Wise Classification of Oceanic Eddies - Redouane Lguensat, Member, IEEE, Miao Sun, Ronan Fablet, Senior Member, IEEE, Evan Mason, Pierre Tandeo, and Ge Chen
+
+
+
 Fonti scarse
 - https://towardsdatascience.com/review-fcn-semantic-segmentation-eb8c9b50d2d1
 - https://towardsdatascience.com/understanding-semantic-segmentation-with-unet-6be4f42d4b47

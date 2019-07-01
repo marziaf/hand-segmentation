@@ -13,7 +13,7 @@ from keras import models
 # TODO: fix parser adding other inputs (e.g. learning rate, optimizer,...)
 parser = argparse.ArgumentParser()
 # TODO optimize parameters
-parser.add_argument("--epochs", type=int, default=50)
+parser.add_argument("--epochs", type=int, default=10)
 parser.add_argument("--batch_size", type=int, default=15)
 parser.add_argument("--patience", type=int, default=10)
 
@@ -25,7 +25,7 @@ patience = args.patience
 
 
 # %% Obtain data
-features, labels = get_data(features_path, labels_path, reduce_images=True, reduction_factor=0.1)  # TODO don't reduce if possible
+features, labels = get_data(features_path, labels_path, reduce_images=True, reduction_factor=0.06)  # TODO don't reduce if possible
 im_size = features.shape[1:4]
 
 # %% Model
@@ -35,7 +35,7 @@ model = get_unet_model(im_size)
 
 # Compile
 # As metrics we would like the pixel accuracy rather than the loss.
-# Adam is ok, you might want to try other optimizers (e.g. SGD, Adagrad/Adadelta,...) and different learning rates.
+# Adam is ok, you might want to try other optimizers (e.g. SGD, Adagrad/Adadelta...) and different learning rates.
 # To specify the lr, need to create an optimizer object TODO
 model.compile(optimizer='adam', loss=ce_dice_loss, metrics=['accuracy'])
 
