@@ -11,7 +11,10 @@
 	* 3.1. [ Contrazione](#Contrazione)
 		* 3.1.1. [ReLU](#ReLU)
 	* 3.2. [Espansione](#Espansione)
-* 4. [ Generazione dei dati](#Generazionedeidati)
+* 4. [ I dati](#Idati)
+	* 4.1. [Generazione dei dati sintetici](#Generazionedeidatisintetici)
+	* 4.2. [Adattare i dati sintetici al modello reale](#Adattareidatisinteticialmodelloreale)
+	* 4.3. [La depth map](#Ladepthmap)
 * 5. [Fonti](#Fonti)
 
 <!-- vscode-markdown-toc-config
@@ -99,31 +102,46 @@ Successivamente alla contrazione, dopo aver attraversato un nodo centrale, il te
 
 La simmetria della rete rende superflua una discussione approfondita dei decoder. Tuttavia questi ricevono in input non solo il tensore rappresentativo dell'immagine: infatti avviene anche una concatenazione tra encoder e decoder corrispondente (operanti allo stesso "livello") per inglobare anche l'informazione riguardante il contesto.
 
-##  4. <a name='Generazionedeidati'></a> Generazione dei dati
+##  4. <a name='Idati'></a> I dati
 
 L'allenamento della rete richiede una grande mole di dati in input. Questo è un ostacolo, in quanto ad ogni immagine deve essere associata una maschera rappresentante le etichette non generabile in automatico (altrimenti avremmo già la soluzione della segmentazione e la costruzione della rete sarebbe inutile).
 
-Il numero di dati necessari per il corretto allenamento è nell'ordine delle migliaia. Questo per evitare che la rete finisca in *overfitting* e per renderla flessibile ai diversi input. L'*overfitting* avviene quando i dati di allenamento della rete sono troppo pochi o troppo simili e quindi la rete impara a rispondere in modo pressochè perfetto a casi già visti, ma non è in grado di gestirne di nuovi.
+Il numero di dati necessari per il corretto allenamento è nell'ordine delle migliaia, questo per evitare che la rete finisca in *overfitting* e per renderla flessibile ai diversi input. L'*overfitting* avviene quando i dati di allenamento della rete sono troppo pochi o troppo simili e quindi la rete impara a rispondere in modo pressochè perfetto a casi già visti, ma non è in grado di gestirne di nuovi.
 
 Poichè non è possibile generare manualmente le maschere con le categorie per le migliaia di immagini necessarie, viene utilizzato un [generatore sintetico](http://lttm.dei.unipd.it/downloads/handposegenerator/). Questo è in grado di applicare una texture ad una mano della quale si possono controllare i movimenti.
 
 ![handgenerator](images_for_presentation/hand_generator.png)
 
-La generazione dei dati avviene a partire da gesti predefiniti, che vengono modificati casualmente per creare più varietà possibile di immagini, e utilizzando sulle stesse pose una texture di pelle umana e una rappresentante la classificazione desiderata. Grazie a questi dati, che possono essere generati in modo automatico e veloce, si ottiene un ampio set di allenamento.
+In questo modo si riescono a generare dati illimitati con uno sforzo umano indipendente dalla dimensione del set desiderata. Tuttavia questo metodo porta degli svantaggi: i dati sintetici sono privi di rumore, variabilità e altri disturbi che invece sono presenti nelle immagini reali. 
 
-Tuttavia questo metodo porta degli svantaggi: i dati sintetici sono privi di rumore e altri disturbi che invece sono presenti nelle immagini reali.
+Altro aspetto piuttosto limitante, da non sottovalutare, è la dimensione dei dati generati. Qui si è utilizzato un set di 11 gesti,per ciascuno ci sono 200 immagini 256x256 sia rgb+depth (4 canali), sia di classificazione (ad un canale), per un totale di circa 8GB. Seppur possa sembrare una quantità non troppo eccessiva, va tenuto conto che questa si deve sommare alla dimensione della rete e che queste dimensioni eccedono le normali capacità dei computer domestici. Questi problemi hanno contribuito in modo non indifferente a rallentare il progetto ed evidenziano i punti di debolezza delle reti neurali.
 
-### Adattare i dati sintetici al modello reale
-//TODO
+###  4.1. <a name='Generazionedeidatisintetici'></a>Generazione dei dati sintetici
 
-### La depth map
+La generazione dei dati avviene a partire da gesti predefiniti, quelli di interesse per il problema finale di riconoscimento gestuale. Questi vengono perturbati casualmente per creare più varietà possibile di immagini. 
+Ad ogni posizione della mano corrispondono tre immagini generate:
+- Due immagini rgb (in realtà a 4 canali, ma uno di nessun interesse): una a cui viene applicata la skin della pelle umana e una a cui corrispondono i colori rappresentanti le classi
+- Un'immagine a un canale con l'informazione sulla distanza (la profondità)
 
-Ulteriore vantaggio dell'uso del generatore è la generazione contestuale delle *depth map* delle immagini, ovvero la rappresentazione delle informazioni sulla tridimensionalità della mano mediante un'immagine ad un canale. Ciò che viene generato, per ogni immagine è quindi:
-- 3 canali colore: RGB
-- Un canale per la depth map
-- Un canale, in un'immagine separata, per le classi.
+Le immagini così generate, però, non sono ancora pronte per essere fornite alla rete: avviene ora la fase di assemblamento di rgb e depth in un'unico tensore e di remapping del tensore delle classi in una matrice a valori interi.
+
+###  4.2. <a name='Adattareidatisinteticialmodelloreale'></a>Adattare i dati sintetici al modello reale
+
+Ora i dati contengono le informazioni essenziali per il riconoscimento di gesti, ma presentano tutti delle caratteristiche comuni molto forti e innaturali.
+
+Un problema subito evidente è l'orientamento: tutte le mani hanno il polso rivolto a sinistra. Per risolvere il problema è sufficiente applicare una rotazione casuale alle immagini, di un numero di gradi nel range 0-360 poichè sono tutte rotazioni plausbili.
+
+Anche la centralità dell'immagine è poco naturale, ma basta applicare piccole traslazioni per ovviare al problema.
+
+Ci sono molte altre modifiche possibili per migliorare le immagini, come riscalarle casualmente, applicare filtri per modificare la luminosità, aggiungere rumore e disturbi, cambiare colori, applicare piccole distorsioni.
+
+###  4.3. <a name='Ladepthmap'></a>La depth map
+
+Ulteriore vantaggio dell'uso del generatore è la generazione contestuale delle *depth map* delle immagini, ossia la rappresentazione delle informazioni sulla tridimensionalità della mano mediante un'immagine ad un canale. Questa è un'informazione ulteriore che non viene fornita dalle normali fotocamere, ma che può essere generata comunque anche nella realtà mediante sensori appositi.
 
 ![depthmap](images_for_presentation/depthmap.jpg)
+
+## I parametri della rete
 
 
 
@@ -131,7 +149,6 @@ Ulteriore vantaggio dell'uso del generatore è la generazione contestuale delle 
 backpropagation
 gradient descent
 differenza dati reali e artificiali
-depth map
 parametri da scegliere
 ...
 
