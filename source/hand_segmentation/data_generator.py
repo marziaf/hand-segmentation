@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import random
 
+import cv2
 
 # Uploads data from mat file to numpy array
 # Reduce arrays sizes by reduce_images and reduction_factor
@@ -39,16 +40,30 @@ def get_data(feat_path, lab_path, feat_variable='rgdb', lab_variable='labels',
         features = features[:int(num_img*reduction_factor), :, :, :]
         labels = labels[:int(num_img*reduction_factor), :, :, :]
 
+    data_perturbations(features, labels)
+
     labels = utils.to_categorical(labels)
 
     return features, labels
 
 
-def data_augmentation(feat, lab):  # TODO
+def data_perturbations(feat, lab):  # TODO
+
+    Nsize = feat.shape[1]
+
     for i in range(0, int(feat.shape[0])):
+
+        # random rotation
         deg = random.randint(0, 359)
         feat[i, :, :, :] = ndimage.rotate(feat[i, :, :, :], deg, reshape=False)
         lab[i, :, :, :] = ndimage.rotate(lab[i, :, :, :], deg, reshape=False)
+
+        # random shift
+        s = np.float32([1, 0, random.randint(-20, 20)], [0, 1, random.randint(-20, 20)])
+        feat[i, :, :, :] = cv2.warpAffine(feat[i, :, :, :], s, (Nsize, Nsize))
+        lab[i, :, :, :] = cv2.warpAffine(lab[i, :, :, :], s, (Nsize, Nsize))
+
+
 
 
 # Shows comparison between random couples of features and labels
