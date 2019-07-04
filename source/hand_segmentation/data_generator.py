@@ -21,16 +21,16 @@ import random
 from scipy import ndimage
 
 
-def get_data(feat_path, lab_path, feat_variable='features', lab_variable='labels',
+def get_data(feat_path, lab_path, feat_variable='rgdb', lab_variable='labels',
                    reduce_images=False, reduction_factor=0.3):
     # Import data
     print("Importing data")
-    features = sio.loadmat(feat_path).get(feat_variable)
-    labels = sio.loadmat(lab_path).get(lab_variable)
-
-    # Transpose in N x M x #Channels x #Set
+    features = np.load(feat_path)
+    labels = np.load(lab_path)
+    # TODO passare già trasposti
+    # Transpose in #set x N x M x #Channels
     print("Transposing tensors")
-    features = features.transpose(3, 0, 1, 2)  # 168x256x256x4
+    features = features.transpose(3, 0, 1, 2)
     labels = labels.transpose(3, 0, 1, 2).astype(int)
     num_img = int(features.shape[0])
 
