@@ -73,7 +73,7 @@ def data_perturbations(feat, lab):  # TODO
         lab[i, :, :] = ndimage.rotate(lab[i, :, :], deg, reshape=False)
         print("Shifting")
         # random shift
-        s = np.float32([1, 0, random.randint(-20, 20)], [0, 1, random.randint(-20, 20)])
+        s = np.float32([1, 0, random.randint(20)-10], [0, 1, random.randint(20)-10])
         feat[i, :, :, :] = cv2.warpAffine(feat[i, :, :, :], s, (nsize, nsize))
         lab[i, :, :] = cv2.warpAffine(lab[i, :, :], s, (nsize, nsize))
 
