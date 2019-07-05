@@ -30,8 +30,8 @@ train_f, train_l, val_f, val_l = get_data(train_path_feat=train_features_path,
                                           train_path_lab=train_labels_path,
                                           val_path_feat=validation_features_path,
                                           val_path_lab=validation_labels_path,
-
-                                          reduce_images=False)  # TODO don't reduce if possible
+                                          reduce_images=True,
+                                          reduction_factor=0.5)  # TODO don't reduce if possible
 # Get the size of the images
 im_size = train_f.shape[1:4]
 
@@ -93,10 +93,7 @@ model.fit(x=train_f,
 
 
 # %%
-# TODO: sanity check on losses (I had negative values)
 # TODO: compare results using CE, CE+dice, dice
-# TODO: generate more data (maybe then need to use a data generator which does not load all the images in RAM at once)
-#  --> maybe we ask professor about source code
 
 # TODO: compute per class pixel accuracy, per class IoU, mean IoU, mean PA, mean class accuracy (using provided file)
 

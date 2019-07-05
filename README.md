@@ -114,7 +114,7 @@ Poichè non è possibile generare manualmente le maschere con le categorie per l
 
 In questo modo si riescono a generare dati illimitati con uno sforzo umano indipendente dalla dimensione del set desiderata. Tuttavia questo metodo porta degli svantaggi: i dati sintetici sono privi di rumore, variabilità e altri disturbi che invece sono presenti nelle immagini reali. 
 
-Altro aspetto piuttosto limitante, da non sottovalutare, è la dimensione dei dati generati. Qui si è utilizzato un set di 11 gesti,per ciascuno ci sono 200 immagini 256x256 sia rgb+depth (4 canali), sia di classificazione (ad un canale), per un totale di circa 8GB. Seppur possa sembrare una quantità non troppo eccessiva, va tenuto conto che questa si deve sommare alla dimensione della rete e che queste dimensioni eccedono le normali capacità dei computer domestici. Questi problemi hanno contribuito in modo non indifferente a rallentare il progetto ed evidenziano i punti di debolezza delle reti neurali.
+Altro aspetto piuttosto limitante, da non sottovalutare, è la dimensione dei dati generati. Qui si è utilizzato un set di 11 gesti,per ciascuno ci sono 200 immagini 256x256 sia rgb+depth (4 canali), sia di classificazione (ad un canale), per un totale di circa 6 GB. Seppur possa sembrare una quantità non troppo eccessiva, va tenuto conto che questa si deve sommare alla dimensione della rete e che queste dimensioni eccedono le normali capacità dei computer domestici. Questi problemi hanno contribuito in modo non indifferente a rallentare il progetto ed evidenziano i punti di debolezza delle reti neurali.
 
 ###  4.1. <a name='Generazionedeidatisintetici'></a>Generazione dei dati sintetici
 
@@ -141,7 +141,15 @@ Ulteriore vantaggio dell'uso del generatore è la generazione contestuale delle 
 
 ![depthmap](images_for_presentation/depthmap.jpg)
 
-## I parametri della rete
+## Allenamento della rete
+
+È adesso possibile iniziare l'allenamento della rete e quindi ottenere i primi risultati.
+
+### Divisione dei dati
+
+La rete necessita di tre diversi set di dati, che sono estratti casualmente tra quelli generati precedentemente, secondo proporzioni prestabilite.
+
+Il primo set, il più ampio (che rappresenta il )
 
 
 

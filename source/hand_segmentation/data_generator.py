@@ -20,7 +20,7 @@ from scipy import ndimage
 
 
 def get_data(train_path_feat, val_path_feat, train_path_lab, val_path_lab,
-                   reduce_images=False, reduction_factor=0.3, perturbations=False):
+                   reduce_images=False, reduction_factor=0.3, perturbations=True):
     # Import data
     print("-----------Importing data-----------")
     train_features = np.load(train_path_feat)
