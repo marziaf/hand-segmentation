@@ -1,8 +1,5 @@
 # Paths
 from paths import *
-# Matlab file reader
-import scipy.io as sio
-from scipy import ndimage
 
 # Tensorflow
 import tensorflow as tf
@@ -22,48 +19,63 @@ import cv2
 from scipy import ndimage
 
 
-def get_data(feat_path, lab_path, feat_variable='rgdb', lab_variable='labels',
-                   reduce_images=False, reduction_factor=0.3):
+def get_data(train_path_feat, val_path_feat, train_path_lab, val_path_lab,
+                   reduce_images=False, reduction_factor=0.3, perturbations=False):
     # Import data
-    print("Importing data")
-    features = np.load(feat_path)
-    labels = np.load(lab_path)
-    # TODO passare già trasposti
-    # Transpose in #set x N x M x #Channels
-    print("Transposing tensors")
-    features = features.transpose(3, 0, 1, 2)
-    labels = labels.transpose(3, 0, 1, 2).astype(int)
-    num_img = int(features.shape[0])
+    print("-----------Importing data-----------")
+    train_features = np.load(train_path_feat)
+    print("Imported train set features")
+    validation_features = np.load(val_path_feat)
+    print("Imported validation set features")
+    train_labels = np.load(train_path_lab)  # TODO verificare se serve .astype(int)
+    print("Imported train labels")
+    validation_labels = np.load(val_path_lab)
+    print("Imported validation labels")
 
+    num_img_train = int(train_features.shape[0])
+    num_img_val = int(validation_features.shape[0])
+
+    print("--------Data manipulation------")
     # If asked to, reduce the number of images
     if reduce_images:
-        features = features[:int(num_img*reduction_factor), :, :, :]
-        labels = labels[:int(num_img*reduction_factor), :, :, :]
+        print("Reducing train_features")
+        train_features = train_features[:int(num_img_train*reduction_factor), :, :, :]
+        print("Reducing train_labels")
+        train_labels = train_labels[:int(num_img_train*reduction_factor), :, :, :]
+        print("Reducing validation_features")
+        validation_features = validation_features[:int(num_img_val * reduction_factor), :, :, :]
+        print("Reducing validation_labels")
+        validation_labels = validation_labels[:int(num_img_val * reduction_factor), :, :, :]
 
-    data_perturbations(features, labels)
+    if perturbations:
+        print("Perturbing training sets")
+        data_perturbations(train_features, train_labels)
+        print("Perturbing validation sets")
+        data_perturbations(validation_features, validation_labels)
 
-    labels = utils.to_categorical(labels)
+    print("Cathegorizing labels")
+    train_labels = utils.to_categorical(train_labels)
+    validation_labels = utils.to_categorical(validation_labels)
 
-    return features, labels
+    print("-----------Data generated-------")
+    return train_features, train_labels, validation_features, validation_labels
 
 
 def data_perturbations(feat, lab):  # TODO
 
-    Nsize = feat.shape[1]
+    nsize = feat.shape[1]
 
     for i in range(0, int(feat.shape[0])):
-
+        print("Rotating")
         # random rotation
         deg = random.randint(0, 359)
         feat[i, :, :, :] = ndimage.rotate(feat[i, :, :, :], deg, reshape=False)
         lab[i, :, :, :] = ndimage.rotate(lab[i, :, :, :], deg, reshape=False)
-
+        print("Shifting")
         # random shift
         s = np.float32([1, 0, random.randint(-20, 20)], [0, 1, random.randint(-20, 20)])
-        feat[i, :, :, :] = cv2.warpAffine(feat[i, :, :, :], s, (Nsize, Nsize))
-        lab[i, :, :, :] = cv2.warpAffine(lab[i, :, :, :], s, (Nsize, Nsize))
-
-
+        feat[i, :, :, :] = cv2.warpAffine(feat[i, :, :, :], s, (nsize, nsize))
+        lab[i, :, :, :] = cv2.warpAffine(lab[i, :, :, :], s, (nsize, nsize))
 
 
 # Shows comparison between random couples of features and labels

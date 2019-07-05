@@ -25,22 +25,31 @@ patience = args.patience
 
 
 # %% Obtain data
-features, labels = get_data(features_path, labels_path, reduce_images=False)  # TODO don't reduce if possible
-im_size = features.shape[1:4]
+print("--------Getting data--------")
+train_f, train_l, val_f, val_l = get_data(train_path_feat=train_features_path,
+                                          train_path_lab=train_labels_path,
+                                          val_path_feat=validation_features_path,
+                                          val_path_lab=validation_labels_path,
+
+                                          reduce_images=False)  # TODO don't reduce if possible
+# Get the size of the images
+im_size = train_f.shape[1:4]
 
 # %% Model
 
 # Get model
+print("-----Getting network model-----")
 model = get_unet_model(im_size)
 
 # Compile
+print("-----Compiling-----")
 # As metrics we would like the pixel accuracy rather than the loss.
 # Adam is ok, you might want to try other optimizers (e.g. SGD, Adagrad/Adadelta...) and different learning rates.
 # To specify the lr, need to create an optimizer object TODO
 model.compile(optimizer='adam', loss=ce_dice_loss, metrics=['accuracy'])
 
 # Train
-print("Ready to start training")
+print("-------Ready to start training-------")
 cp = tf.keras.callbacks.ModelCheckpoint(filepath=save_model_path, save_best_only=True, verbose=1)
 
 # Callbacks
@@ -60,14 +69,17 @@ callbacks = [callbacktb, early_stop, cp]
 
 # Fit
 
-model.fit(x=features,
-          y=labels,
+print("------Start fitting the model------")
+
+model.fit(x=train_f,
+          y=train_l,
+          validation_data=(val_f, val_l),
           batch_size=batch_size,
           epochs=epochs,
           verbose=2,
           callbacks=callbacks,
-          validation_split=0.2,
           shuffle=True)
+
 
 # %% TODO: Evaluate performance  (sample code to modify)
 # y_hat = m.predict(x_test)
