@@ -41,11 +41,11 @@ def get_data(train_path_feat, val_path_feat, train_path_lab, val_path_lab,
         print("Reducing train_features")
         train_features = train_features[:int(num_img_train*reduction_factor), :, :, :]
         print("Reducing train_labels")
-        train_labels = train_labels[:int(num_img_train*reduction_factor), :, :, :]
+        train_labels = train_labels[:int(num_img_train*reduction_factor), :, :]
         print("Reducing validation_features")
         validation_features = validation_features[:int(num_img_val * reduction_factor), :, :, :]
         print("Reducing validation_labels")
-        validation_labels = validation_labels[:int(num_img_val * reduction_factor), :, :, :]
+        validation_labels = validation_labels[:int(num_img_val * reduction_factor), :, :]
 
     if perturbations:
         print("Perturbing training sets")
@@ -70,12 +70,12 @@ def data_perturbations(feat, lab):  # TODO
         # random rotation
         deg = random.randint(0, 359)
         feat[i, :, :, :] = ndimage.rotate(feat[i, :, :, :], deg, reshape=False)
-        lab[i, :, :, :] = ndimage.rotate(lab[i, :, :, :], deg, reshape=False)
+        lab[i, :, :] = ndimage.rotate(lab[i, :, :], deg, reshape=False)
         print("Shifting")
         # random shift
         s = np.float32([1, 0, random.randint(-20, 20)], [0, 1, random.randint(-20, 20)])
         feat[i, :, :, :] = cv2.warpAffine(feat[i, :, :, :], s, (nsize, nsize))
-        lab[i, :, :, :] = cv2.warpAffine(lab[i, :, :, :], s, (nsize, nsize))
+        lab[i, :, :] = cv2.warpAffine(lab[i, :, :], s, (nsize, nsize))
 
 
 # Shows comparison between random couples of features and labels
