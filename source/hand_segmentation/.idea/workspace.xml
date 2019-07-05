@@ -49,8 +49,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/data_generator.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="211">
-              <caret line="75" column="101" selection-start-line="75" selection-start-column="101" selection-end-line="75" selection-end-column="101" />
+            <state relative-caret-position="446">
+              <caret line="75" column="82" selection-start-line="75" selection-start-column="82" selection-end-line="75" selection-end-column="82" />
               <folding>
                 <element signature="e#8#27#0" expanded="true" />
               </folding>
@@ -126,8 +126,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="85" />
-    <option name="y" value="1105" />
+    <option name="x" value="194" />
+    <option name="y" value="61" />
     <option name="width" value="1024" />
     <option name="height" value="746" />
   </component>
@@ -337,7 +337,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="1023" width="1366" height="746" extended-state="6" />
+    <frame x="0" y="-1" width="1280" height="1024" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49444443" weight="0.1325391" />
@@ -354,7 +354,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.329582" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5026061" side_tool="true" weight="0.45659164" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.2926045" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.20222223" />
       <window_info anchor="bottom" id="Python Console" order="12" sideWeight="0.4973939" weight="0.22444445" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -470,8 +470,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/data_generator.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="211">
-          <caret line="75" column="101" selection-start-line="75" selection-start-column="101" selection-end-line="75" selection-end-column="101" />
+        <state relative-caret-position="446">
+          <caret line="75" column="82" selection-start-line="75" selection-start-column="82" selection-end-line="75" selection-end-column="82" />
           <folding>
             <element signature="e#8#27#0" expanded="true" />
           </folding>
