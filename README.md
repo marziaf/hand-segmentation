@@ -15,7 +15,11 @@
 	* 4.1. [Generazione dei dati sintetici](#Generazionedeidatisintetici)
 	* 4.2. [Adattare i dati sintetici al modello reale](#Adattareidatisinteticialmodelloreale)
 	* 4.3. [La depth map](#Ladepthmap)
-* 5. [Fonti](#Fonti)
+* 5. [Allenamento della rete](#Allenamentodellarete)
+	* 5.1. [Divisione dei dati](#Divisionedeidati)
+	* 5.2. [Inizializzazione dei parametri](#Inizializzazionedeiparametri)
+	* 5.3. [Forward propagation](#Forwardpropagation)
+* 6. [Fonti](#Fonti)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
@@ -88,7 +92,7 @@ La prima parte della rete ad essere attraversata è quella di contrazione. Qui 4
 
 Un encoder è costituito da diversi livelli, tra cui di convoluzione, attivazione e pooling.
 
-####  3.1.1. <a name='ReLU'></a>ReLU
+####  3.1.1. <a name='ReLU'></a>ReLU //TODO sostituire con attivazione generica
 
 Per spiegare in cosa consistono i livelli di attivazione è necessario comprendere le componenti "atomiche" di ogni rete neurale: i *neuroni*.
 
@@ -141,15 +145,44 @@ Ulteriore vantaggio dell'uso del generatore è la generazione contestuale delle 
 
 ![depthmap](images_for_presentation/depthmap.jpg)
 
-## Allenamento della rete
+##  5. <a name='Allenamentodellarete'></a>Allenamento della rete
 
 È adesso possibile iniziare l'allenamento della rete e quindi ottenere i primi risultati.
 
-### Divisione dei dati
+###  5.1. <a name='Divisionedeidati'></a>Divisione dei dati
 
 La rete necessita di tre diversi set di dati, che sono estratti casualmente tra quelli generati precedentemente, secondo proporzioni prestabilite.
 
-Il primo set, il più ampio (che rappresenta il )
+Lo scopo dell'allenamento è impostare i parametri della rete affinchè performi al meglio. Questi vengono impostati facendo attraversare l'input nella rete, che in output fornirà un tensore dipendente dagli stessi parametri. Inizialmente questi assumono valori pseudo-casuali, che vengono aggiustati nella fase di *backpropagation* grazie alle *labels* (il tensore delle classi) fornite insieme alle immagini di input. Il primo set, di *training*, (il più ampio, che rappresenta il 70% dei dati), viene impegato a questo proposito.
+
+Nella fase successiva vengono valutate le performance della rete con i nuovi parametri e per questo scopo si impiega il set di *validation*, (20% del set originario) sul quale si calcolano i parametri di misura dell'efficienza per monitorare dati oggettivi sulla qualità di apprendimento ed eventualmente fermarlo in caso di mancato miglioramento.
+
+L'ultimo set, di *test* (il restante 10%), viene utilizzato per la verifica finale dei risultati dell'allenamento.
+
+###  5.2. <a name='Inizializzazionedeiparametri'></a>Inizializzazione dei parametri e funzioni di attivazione
+
+Gli *iperparametri* della rete sono valori associati ad ogni neurone di ogni livello. I neuroni sono le entità atomiche della rete e ne determinano il funzionamento. Ogni neurone ha il compito di restituire un output fornito da una funzione che viene scelta in base alle esigenze.
+
+Con livello si intende un insieme di neuroni che operano in parallelo. Ognuno di essi riceve gli stessi input (nel caso di una rete completamente connessa) e determina un output definito da una stessa *funzione di attivazione* i cui parametri, però, sono dipendenti dal singolo neurone. Più nello specifico si tratta di un peso, per cui viene moltiplicato l'input, e di un bias. L'insieme dei parametri di tutta la rete costituisce gli *iperparametri*.
+
+La rete è composta di diversi livelli, collegati tra loro in quanto l'output del livello precedente è l'input del successivo, e che si dividono in tre categorie: *input*, *output* e *hidden*. Su questi ultimi c'è un maggior margine di libertà per quanto riguarda la scelta della dimensione (numero di neuroni) e della funzione di attivazione, mentre l'input e l'output sono vincolati dalle dimensioni dei tensori di ingresso e uscita e dalla loro tipologia; inoltre si trovano agli estremi della rete.
+
+![layers](images_for_presentation/layers_basic.jpg)
+
+La scelta della funzione di attivazione non è solo vincolata alle sue caratteristiche matematiche, ma anche all'efficienza della sua computazione: si deve ricordare infatti che il numero di neuroni è estremamente elevato, e di conseguenza anche i calcoli sono temporalmente dispendiosi.
+
+La facilità di calcolo e la rapidità nella convergenza sono la ragione per cui per negli hidden layers (che nella rete utilizzata in questo caso sono incapsulati in encoder e decoder) viene utilizzata la *ReLU*, *rectified linear unit*, con il comportamento da funzione identità per valori in ingresso positivi e che invece appiattisce a 0 i valori negativi. Nella sua semplicità, non si potrebbe ricondurre a una funzione completamente lineare, che avrebbe derivata costante e impedirebbe la backpropagation. Tuttavia questa scelta può condurre ad un problema: quando l'input approccia lo zero o un valore negativo si ferma l'apprendimento come conseguenza dell'impossibilità di svolgere la backpropagation.
+
+Nel livello di output invece viene impiegata la *softmax*, o esponenziale normalizzata
+
+
+
+###  5.3. <a name='Forwardpropagation'></a>Forward propagation
+
+La *forward propagation* è così detta in quanto è la fase in cui i dati attraversano la rete nella sua direzione "naturale", ossia input-output.
+
+
+
 
 
 
@@ -163,7 +196,7 @@ parametri da scegliere
 
 
 
-##  5. <a name='Fonti'></a>Fonti
+##  6. <a name='Fonti'></a>Fonti
 
 Fonti valide
 

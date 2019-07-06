@@ -20,7 +20,7 @@ from scipy import ndimage
 
 
 def get_data(train_path_feat, val_path_feat, train_path_lab, val_path_lab,
-                   reduce_images=False, reduction_factor=0.3, perturbations=True):
+                   reduce_images=False, reduction_factor=0.3, perturbations=False):
     # Import data
     print("-----------Importing data-----------")
     train_features = np.load(train_path_feat)
@@ -65,15 +65,16 @@ def data_perturbations(feat, lab):  # TODO
 
     nsize = feat.shape[1]
 
+    print("Shifting and rotating")
     for i in range(0, int(feat.shape[0])):
-        print("Rotating")
+
         # random rotation
         deg = random.randint(0, 359)
         feat[i, :, :, :] = ndimage.rotate(feat[i, :, :, :], deg, reshape=False)
         lab[i, :, :] = ndimage.rotate(lab[i, :, :], deg, reshape=False)
-        print("Shifting")
+
         # random shift
-        s = np.float32([1, 0, random.randint(0, 20)-10], [0, 1, random.randint(0, 20)-10])
+        s = np.float32([[1, 0, random.randint(0, 20)-10], [0, 1, random.randint(0, 20)-10]])
         feat[i, :, :, :] = cv2.warpAffine(feat[i, :, :, :], s, (nsize, nsize))
         lab[i, :, :] = cv2.warpAffine(lab[i, :, :], s, (nsize, nsize))
 
