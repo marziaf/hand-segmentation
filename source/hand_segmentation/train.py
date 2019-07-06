@@ -31,7 +31,7 @@ train_f, train_l, val_f, val_l = get_data(train_path_feat=train_features_path,
                                           val_path_feat=validation_features_path,
                                           val_path_lab=validation_labels_path,
                                           reduce_images=True,
-                                          reduction_factor=0.5)  # TODO don't reduce if possible
+                                          reduction_factor=0.2)  # TODO don't reduce if possible
 # Get the size of the images
 im_size = train_f.shape[1:4]
 
@@ -41,12 +41,22 @@ im_size = train_f.shape[1:4]
 print("-----Getting network model-----")
 model = get_unet_model(im_size)
 
+
+def print_summary(s):
+    with open(op.join(save_model_dir, "model_summary.txt"), 'w+') as f:
+        print(s, file=f)
+
+
+model.summary(print_fn=print_summary)
+
 # Compile
 print("-----Compiling-----")
 # As metrics we would like the pixel accuracy rather than the loss.
 # Adam is ok, you might want to try other optimizers (e.g. SGD, Adagrad/Adadelta...) and different learning rates.
 # To specify the lr, need to create an optimizer object TODO
 model.compile(optimizer='adam', loss=ce_dice_loss, metrics=['accuracy'])
+
+
 
 # Train
 print("-------Ready to start training-------")
