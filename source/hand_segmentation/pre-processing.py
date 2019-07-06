@@ -13,8 +13,8 @@ from scipy import ndimage
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--set1")
-parser.add_argument("--set2")
+parser.add_argument("--set1", type=str)
+parser.add_argument("--set2", type=str)
 
 
 args = parser.parse_args()
@@ -24,7 +24,7 @@ fset2 = args.set2
 set1 = np.load(fset1)
 set2 = np.load(fset2)
 
-nsize = set.shape[0]
+nsize = set1.shape[1]
 
 print("Shifting and rotating")
 for i in range(0, int(set1.shape[0])):
@@ -44,7 +44,8 @@ for i in range(0, int(set1.shape[0])):
         set1[i, :, :, :] = np.fliplr(set1[i, :, :, :])
         set2[i, :, :] = np.fliplr(set2[i, :, :])
 
-    # random flip ud
-    if bool(random.getrandbits(1)):
-        set1[i, :, :, :] = np.flipud(set1[i, :, :, :])
-        set2[i, :, :] = np.flipud(set2[i, :, :])
+
+print("Now saving")
+
+np.save(fset1+"processed", set1)
+np.save(fset2+"processed", set2)

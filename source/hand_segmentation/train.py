@@ -14,7 +14,7 @@ from keras import models
 parser = argparse.ArgumentParser()
 # TODO optimize parameters
 parser.add_argument("--epochs", type=int, default=50)
-parser.add_argument("--batch_size", type=int, default=15)
+parser.add_argument("--batch_size", type=int, default=2)
 parser.add_argument("--patience", type=int, default=10)
 
 args = parser.parse_args()

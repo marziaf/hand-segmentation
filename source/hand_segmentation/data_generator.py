@@ -20,7 +20,7 @@ from scipy import ndimage
 
 
 def get_data(train_path_feat, val_path_feat, train_path_lab, val_path_lab,
-                   reduce_images=False, reduction_factor=0.3, perturbations=False):
+                   reduce_images=False, reduction_factor=0.3):
     # Import data
     print("-----------Importing data-----------")
     train_features = np.load(train_path_feat)
@@ -47,36 +47,12 @@ def get_data(train_path_feat, val_path_feat, train_path_lab, val_path_lab,
         print("Reducing validation_labels")
         validation_labels = validation_labels[:int(num_img_val * reduction_factor), :, :]
 
-    if perturbations:
-        print("Perturbing training sets")
-        data_perturbations(train_features, train_labels)
-        print("Perturbing validation sets")
-        data_perturbations(validation_features, validation_labels)
-
     print("Cathegorizing labels")
     train_labels = utils.to_categorical(train_labels)
     validation_labels = utils.to_categorical(validation_labels)
 
     print("-----------Data generated-------")
     return train_features, train_labels, validation_features, validation_labels
-
-
-def data_perturbations(feat, lab):  # TODO
-
-    nsize = feat.shape[1]
-
-    print("Shifting and rotating")
-    for i in range(0, int(feat.shape[0])):
-
-        # random rotation
-        deg = random.randint(0, 359)
-        feat[i, :, :, :] = ndimage.rotate(feat[i, :, :, :], deg, reshape=False)
-        lab[i, :, :] = ndimage.rotate(lab[i, :, :], deg, reshape=False)
-
-        # random shift
-        s = np.float32([[1, 0, random.randint(0, 20)-10], [0, 1, random.randint(0, 20)-10]])
-        feat[i, :, :, :] = cv2.warpAffine(feat[i, :, :, :], s, (nsize, nsize))
-        lab[i, :, :] = cv2.warpAffine(lab[i, :, :], s, (nsize, nsize))
 
 
 # Shows comparison between random couples of features and labels
