@@ -13,8 +13,8 @@ from keras import models
 # TODO: fix parser adding other inputs (e.g. learning rate, optimizer,...)
 parser = argparse.ArgumentParser()
 # TODO optimize parameters
-parser.add_argument("--epochs", type=int, default=50)
-parser.add_argument("--batch_size", type=int, default=2)
+parser.add_argument("--epochs", type=int, default=20)
+parser.add_argument("--batch_size", type=int, default=1)
 parser.add_argument("--patience", type=int, default=10)
 
 args = parser.parse_args()
@@ -31,7 +31,7 @@ train_f, train_l, val_f, val_l = get_data(train_path_feat=train_features_path,
                                           val_path_feat=validation_features_path,
                                           val_path_lab=validation_labels_path,
                                           reduce_images=True,
-                                          reduction_factor=0.2)  # TODO don't reduce if possible
+                                          reduction_factor=0.01)  # TODO don't reduce if possible
 # Get the size of the images
 im_size = train_f.shape[1:4]
 
@@ -42,12 +42,7 @@ print("-----Getting network model-----")
 model = get_unet_model(im_size)
 
 
-def print_summary(s):
-    with open(op.join(save_model_dir, "model_summary.txt"), 'w+') as f:
-        print(s, file=f)
 
-
-model.summary(print_fn=print_summary)
 
 # Compile
 print("-----Compiling-----")
@@ -80,6 +75,7 @@ callbacks = [callbacktb, early_stop, cp]
 # Fit
 
 print("------Start fitting the model------")
+print(model.summary())
 
 model.fit(x=train_f,
           y=train_l,
@@ -89,6 +85,14 @@ model.fit(x=train_f,
           verbose=2,
           callbacks=callbacks,
           shuffle=True)
+
+def print_summary(s):
+    with open(op.join(save_model_dir, "model_summary.txt"), 'w+') as f:
+        print(s, file=f)
+
+
+model.summary(print_fn=print_summary)
+
 
 
 # %% TODO: Evaluate performance  (sample code to modify)

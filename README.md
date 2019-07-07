@@ -9,7 +9,7 @@
 		* 2.1.2. [Max pooling](#Maxpooling)
 * 3. [ U-Net](#U-Net)
 	* 3.1. [ Contrazione](#Contrazione)
-		* 3.1.1. [ReLU](#ReLU)
+		* 3.1.1. [ReLU //TODO sostituire con attivazione generica](#ReLUTODOsostituireconattivazionegenerica)
 	* 3.2. [Espansione](#Espansione)
 * 4. [ I dati](#Idati)
 	* 4.1. [Generazione dei dati sintetici](#Generazionedeidatisintetici)
@@ -17,8 +17,9 @@
 	* 4.3. [La depth map](#Ladepthmap)
 * 5. [Allenamento della rete](#Allenamentodellarete)
 	* 5.1. [Divisione dei dati](#Divisionedeidati)
-	* 5.2. [Inizializzazione dei parametri](#Inizializzazionedeiparametri)
-	* 5.3. [Forward propagation](#Forwardpropagation)
+	* 5.2. [Inizializzazione dei parametri e funzioni di attivazione](#Inizializzazionedeiparametriefunzionidiattivazione)
+	* 5.3. [Feed forward](#Feedforward)
+	* 5.4. [Back-propagation](#Back-propagation)
 * 6. [Fonti](#Fonti)
 
 <!-- vscode-markdown-toc-config
@@ -92,7 +93,7 @@ La prima parte della rete ad essere attraversata è quella di contrazione. Qui 4
 
 Un encoder è costituito da diversi livelli, tra cui di convoluzione, attivazione e pooling.
 
-####  3.1.1. <a name='ReLU'></a>ReLU //TODO sostituire con attivazione generica
+####  3.1.1. <a name='ReLUTODOsostituireconattivazionegenerica'></a>ReLU //TODO sostituire con attivazione generica
 
 Per spiegare in cosa consistono i livelli di attivazione è necessario comprendere le componenti "atomiche" di ogni rete neurale: i *neuroni*.
 
@@ -159,7 +160,7 @@ Nella fase successiva vengono valutate le performance della rete con i nuovi par
 
 L'ultimo set, di *test* (il restante 10%), viene utilizzato per la verifica finale dei risultati dell'allenamento.
 
-###  5.2. <a name='Inizializzazionedeiparametri'></a>Inizializzazione dei parametri e funzioni di attivazione
+###  5.2. <a name='Inizializzazionedeiparametriefunzionidiattivazione'></a>Inizializzazione dei parametri e funzioni di attivazione
 
 Gli *iperparametri* della rete sono valori associati ad ogni neurone di ogni livello. I neuroni sono le entità atomiche della rete e ne determinano il funzionamento. Ogni neurone ha il compito di restituire un output fornito da una funzione che viene scelta in base alle esigenze.
 
@@ -171,17 +172,27 @@ La rete è composta di diversi livelli, collegati tra loro in quanto l'output de
 
 La scelta della funzione di attivazione non è solo vincolata alle sue caratteristiche matematiche, ma anche all'efficienza della sua computazione: si deve ricordare infatti che il numero di neuroni è estremamente elevato, e di conseguenza anche i calcoli sono temporalmente dispendiosi.
 
-La facilità di calcolo e la rapidità nella convergenza sono la ragione per cui per negli hidden layers (che nella rete utilizzata in questo caso sono incapsulati in encoder e decoder) viene utilizzata la *ReLU*, *rectified linear unit*, con il comportamento da funzione identità per valori in ingresso positivi e che invece appiattisce a 0 i valori negativi. Nella sua semplicità, non si potrebbe ricondurre a una funzione completamente lineare, che avrebbe derivata costante e impedirebbe la backpropagation. Tuttavia questa scelta può condurre ad un problema: quando l'input approccia lo zero o un valore negativo si ferma l'apprendimento come conseguenza dell'impossibilità di svolgere la backpropagation.
+La facilità di calcolo e la rapidità nella convergenza sono la ragione per cui per negli hidden layers (che nella rete utilizzata in questo caso sono incapsulati in encoder e decoder) viene utilizzata la *ReLU*, *rectified linear unit*, con il comportamento da funzione identità per valori in ingresso positivi e che invece appiattisce a 0 i valori negativi. Nella sua semplicità, non si potrebbe ricondurre a una funzione completamente lineare, che avrebbe derivata costante e impedirebbe la backpropagation. Tuttavia questa scelta può condurre ad un problema: quando l'input approccia lo zero o un valore negativo si ferma l'apprendimento come conseguenza dell'impossibilità di svolgere la backpropagation. Nel livello di output invece viene impiegata la *softmax*, o esponenziale normalizzata. Questa viene impiegata nei problemi di classificazione non binari e il suo output rappresenta la probabilità di appartenenza alla classe. Grazie alla sua caratteristica esponenziale le differenze tra i valori di input vengono amplificate in uscita.
+// TODO un grafico o una formula
 
-Nel livello di output invece viene impiegata la *softmax*, o esponenziale normalizzata
+I neuroni sono quindi funzioni i cui parametri devono essere ottimizzati per riuscire ad ottenere l'output desiderato e che inizialmente vengono impostati a valori casuali tra 0 e 1.
 
-
-
-###  5.3. <a name='Forwardpropagation'></a>Forward propagation
+###  5.3. <a name='Feedforward'></a>Feed forward
 
 La *forward propagation* è così detta in quanto è la fase in cui i dati attraversano la rete nella sua direzione "naturale", ossia input-output.
 
+Durante la forward propagation ogni unità (neurone) pesa l'input e vi aggiunge la componente di bias, per poi applicare al valore ottenuto la funzione di attivazione.
 
+###  5.4. <a name='Back-propagation'></a>Back-propagation
+
+Avviene ora la fase di correzione degli errori per approssimazioni successive. Interviene a questo proposito la *loss function*.
+
+La loss function che è stata scelta in questo caso è la *Cross-Entropy dice loss*. Questa deriva dalla *Cross Entropy* (CE) loss, funzione che misura le performance di una rete il cui output è una probabilità ed è quindi adatta alla rete qui utilizzata, in quanto l'output layer utilizza la softmax activation function. Questa loss misura l'entropia mutua tra il risultato ottenuto e quello atteso. Quello che ci si aspetta è che il valore dell'entropia mutua decresca ad ogni epoca (ciclo di allenamento della rete) e che quindi i risultati ottenuti siano sempre più fedeli a quelli attesi. Tuttavia questa metrica potrebbe portare a risultati falsati in questo caso, essendo le classi sbilanciate: tutte le immagini presentano la classe "sfondo" dominante su altre classi come "mignolo", in quanto lo sfondo occuperà molti più pixel nell'immagine rispetto ad altre classi. Utilizzare la CE loss potrebbe portare quindi a risultati sbilanciati, perciò occorre un fattore di correzione. Questo è costituito dalla dice loss // Formula dice loss, commento dice loss
+//TODO formule grafici CE
+
+A prescindere dalla scelta della funzione di loss, l'obiettivo sarà quello di minimizzarla per ridurre la discrepanza tra valore ottenuto e desiderato. Per far questo viene calcolato il gradiente della loss (calcolato rispetto ai suoi parametri) al fine di avvicinarsi al minimo della funzione. Il metodo della discesa del gradiente consiste nello spostarsi nella curva (della funzione) lungo la direzione di decrescita e permette di evitare il calcolo della derivata globale della funzione per l'individuazione dei punti di minimo. Lo spostamento lungo la curva rappresenta la modifica dei parametri, che avviene in modo proporzionale alla derivata parziale della loss.
+Questo sistema presenta però degli svantaggi: non c'è garanzia di trovare il minimo globale, infatti con questo sistema una volta situati in un punto di minimo locale non è possibile uscirne e vi sono difficoltà anche nell'attraversamento di plateau.
+//TODO immagine gradient descent
 
 
 
@@ -198,8 +209,6 @@ parametri da scegliere
 
 ##  6. <a name='Fonti'></a>Fonti
 
-Fonti valide
-
 - Natural Networks and Deep Learning - Michael Nielsen
 
 - Encoder-Decoder with Atrous Separable Convolution for Semantic Image Segmentation - Liang-Chieh Chen, Yukun Zhu,George Papandreou, Florian Schroff, and Hartwig Adam
@@ -212,10 +221,6 @@ Fonti valide
 
 - EddyNet: A Deep Neural Network For Pixel-Wise Classification of Oceanic Eddies - Redouane Lguensat, Member, IEEE, Miao Sun, Ronan Fablet, Senior Member, IEEE, Evan Mason, Pierre Tandeo, and Ge Chen
 
+- AnatomyNet: Deep Learning for Fast and Fully Automated Whole-volume Segmentation of Head and Neck Anatomy - Wentao Zhu, Yufang Huang, Liang Zeng, Xuming Chen and Yong Liu, Zhen Qian, Nan Du and Wei Fan, Xiaohui Xie
 
-
-Fonti scarse
-- https://towardsdatascience.com/review-fcn-semantic-segmentation-eb8c9b50d2d1
-- https://towardsdatascience.com/understanding-semantic-segmentation-with-unet-6be4f42d4b47
-- https://towardsdatascience.com/intuitively-understanding-convolutions-for-deep-learning-1f6f42faee1
-- https://www.kaggle.com/dansbecker/rectified-linear-units-relu-in-deep-learning
+- Dice Loss Function for image Segmentation Using Dense Dilation Spatial Pooling Network, Qiuhua Liu, Min Fu
