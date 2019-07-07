@@ -1,6 +1,19 @@
 
 # Riconoscimento delle parti della mano mediante deep learning
 
+Favaro Marzia
+
+Relatore: Pietro Zanuttigh
+
+Corso di laurea in Ingegneria dell'Informazione
+
+15 Luglio 2019
+Anno Accademico 2018-2019
+
+Firma studente Firma relatore
+
+\pagebreak
+
 <!-- vscode-markdown-toc -->
 * 1. [Introduzione](#Introduzione)
 * 2. [La rete neurale](#Lareteneurale)
@@ -9,7 +22,7 @@
 		* 2.1.2. [Max pooling](#Maxpooling)
 * 3. [ U-Net](#U-Net)
 	* 3.1. [ Contrazione](#Contrazione)
-		* 3.1.1. [ReLU //TODO sostituire con attivazione generica](#ReLUTODOsostituireconattivazionegenerica)
+		* 3.1.1. [Funzioni di attivazione](#Funzionidiattivazione)
 	* 3.2. [Espansione](#Espansione)
 * 4. [ I dati](#Idati)
 	* 4.1. [Generazione dei dati sintetici](#Generazionedeidatisintetici)
@@ -28,6 +41,7 @@
 	/vscode-markdown-toc-config -->
 <!-- /vscode-markdown-toc -->
 
+\pagebreak
 
 ##  1. <a name='Introduzione'></a>Introduzione
 
@@ -40,6 +54,13 @@ Il progetto di segmentazione di una mano vede il suo fine in un più ampio conte
 La trattazione sarà in primo luogo generale, mirata a descrivere il generico approccio ad un problema di segmentazione tramite reti neurali convoluzionali, e nella seconda parte andranno a descrivere più nel dettaglio le scelte implementative specifiche del caso.
 
 Si partirà con la discussione del problema della segmentazione semantica in generale, accennando agli specifici elementi che compongono le reti per poter discutere la scelta della tipologia della rete. Si dedicherà poi spazio alla discussione dei dati: le problematiche legate alla loro realizzazione e soluzioni alternative per una generazione numerosa. Infine verrà la trattazione più specifica delle scelte effettuate per risolvere il problema specifico.
+
+Il codice sorgente è disponibile su github:
+
+https://github.com/marziaf/hand-segmentation
+![Esempio labels](images_for_presentation/qr.png)
+
+\pagebreak
 
 ##  2. <a name='Lareteneurale'></a>La rete neurale
 
@@ -64,28 +85,30 @@ Prima di trattare nello specifico la rete adottata, è necessario conoscere i bl
 
 ####  2.1.1. <a name='Convoluzione'></a>Convoluzione
 
-L'input dell'operazione di convoluzione consiste in una matrice tridimensionale (un volume) di taglia *n<sub>\*in</sub>\*n<sub>in</sub>\*channels*. A compiere la manipolazione dell'input sono *k* filtri *f\*f\*channels*.
+L'input dell'operazione di convoluzione consiste in un tensore (un volume) di taglia *n<sub>\*in</sub>\*n<sub>in</sub>\*channels*. A compiere la manipolazione dell'input sono *k* filtri *f\*f\*channels*: la convoluzione non avviene infatti su tutta la matrice nella sua interezza, ma avviene localmente in k regioni.
 
 La funzione dei filtri, collezioni *kernel*, è quella di scorrere lungo la matrice in input, compiendo l'operazione di convoluzione e generando in output una matrice riportante una forma di compressione locale delle informazioni originali. Ogni kernel agisce in modo indipendente sul relativo canale dell'immagine e l'output del filtro è la combinazione di questi.
 
-L'output che viene generato ha dimensione *n<sub>out</sub>\*n<sub>out</sub>\*k*, in cui n<sub>out</sub> risuta ![nout](images_for_presentation/nout_inline.png), dove *p* rappresenta la dimensione di *padding* della convoluzione e *s* lo *stride*.
+L'output che viene generato ha dimensione *n<sub>out</sub>\*n<sub>out</sub>\*k*, in cui n<sub>out</sub> risuta ![nout](images_for_presentation/nout_inline.png), dove *p* rappresenta la dimensione di *padding* della convoluzione e *s* lo *stride*. Il padding consiste nell'aggiungere un margine attorno all'immagine per non perdere l'informazione di bordo. Lo stride invece è l'indicatore di "velocità" di spostamento dei filtri, ossia di quanto si spostano ad ogni passaggio. Minore è lo stride, maggiore è la sovrapposizione dei filtri.
 //TODO sostituire in latex
 
 ####  2.1.2. <a name='Maxpooling'></a>Max pooling
 
-L'informazione, così come fornita in input, non è esaminabile immediatamente, in quanto non è possibile avere una visione d'insieme di uno volume così ampio. L'idea di fondo è quella di ridurre le informazioni da analizzare, mantenendo solo le più importanti (nel caso del max pooling, i pixel con i valori massimi) per ogni regione.
+L'informazione, così come fornita in input, non è esaminabile direttamente, in quanto non è possibile avere una visione d'insieme di uno volume così ampio. L'idea di fondo è quella di ridurre le informazioni da analizzare, mantenendo solo le più importanti (nel caso del max pooling, i pixel con i valori massimi) per ogni regione.
 
 ![max_pooling](images_for_presentation/max_pooling.png)
 
-Mediante il *pooling*, ad ogni livello i filtri diventano sempre più consci del contesto complessivo dell'immagine, in quanto questa è sempre più concentrata in poco spazio e diventa analizzabile da un singolo filtro. Grazie a questa procedura, quindi, è possibile analizzare l'immagine nella sua interezza, rendendo più chiaro *cosa* rappresenta, ma perdendo l'informazione sul *dove* i pixel si trovassero nell'input. Le procedure che vengono eseguite sono lecite nelle reti convoluzionali in virtù dell'invarianza alla traslazione delle componenti elementari di cui si compongono: non è la posizione assoluta a contare, ma quella relativa.
+Mediante il *pooling*, ad ogni livello i filtri diventano sempre più consci del contesto complessivo dell'immagine, in quanto questa è sempre più concentrata in poco spazio e diventa analizzabile da un singolo filtro //{TODO check}. Grazie a questa procedura, quindi, è possibile analizzare l'immagine nella sua interezza, rendendo più chiaro *cosa* rappresenta, ma perdendo l'informazione sul *dove* l'informazione si trovasse rispetto all'input. Le procedure che vengono eseguite sono lecite nelle reti convoluzionali in virtù dell'invarianza alla traslazione delle componenti elementari di cui si compongono: non è la posizione assoluta a contare, ma quella relativa.
 
 Si deve osservare come però, per il problema di segmentazione, questo possa sembrare controproducente: è infatti fondamentale ripristinare l'informazione spaziale.
 
 A questo scopo interviene l'*upsampling*, per invertire la procedura di condensamento e riportare i risultati alle coordinate originali. Una tecnica che discende naturalmente dalla convoluzione è la *deconvoluzione*, o *backwards convolution*, che semplicemente è la sua inversione.
 
+\pagebreak
+
 ##  3. <a name='U-Net'></a> U-Net
 
-La struttura che è stata scelta per la rete è una U-Net, sviluppata da Olaf Ronneberger per l'analisi di immagini biomediche. La rete si presta bene al problema per via della sua struttura a encoder-decoder che permette prima di comprimere e successivamente espandere il tensore in ingresso per le finalità sopra citate.
+La struttura che è stata scelta per la rete è una U-Net, sviluppata da Olaf Ronneberger, per l'analisi di immagini biomediche. La rete si presta bene al problema per via della sua struttura a encoder-decoder che permette prima di comprimere e successivamente espandere il tensore in ingresso per le finalità sopra citate.
 
 ![unet](images_for_presentation/unet.jpg)
 
@@ -95,23 +118,21 @@ La prima parte della rete ad essere attraversata è quella di contrazione. Qui 4
 
 Un encoder è costituito da diversi livelli, tra cui di convoluzione, attivazione e pooling.
 
-####  3.1.1. <a name='ReLUTODOsostituireconattivazionegenerica'></a>ReLU //TODO sostituire con attivazione generica
+####  3.1.1. <a name='Funzionidiattivazione'></a> Funzioni di attivazione //TODO cosa ci fa qui? volevo dire altro?
 
-Per spiegare in cosa consistono i livelli di attivazione è necessario comprendere le componenti "atomiche" di ogni rete neurale: i *neuroni*.
-
-Un neurone è l'elemento elementare della rete, di cui i livelli sono composti. Ha lo scopo di valutare l'input pesato e a cui viene applicato un bias e a seconda del valore ottenuto decidere se attivarsi. //TODO
-
-Una funzione di attivazione molto comune nei modelli di deep learning è la *Rectified Linear Unit*, o *ReLU*, ed è stata impiegata anche in questo contesto. Viene descritta da `f(x) = max(0,x)` e nonostante la sua semplicità è molto efficace: a differenza della altrettanto nota tangente iperbolica, l'allenamento è più efficiente e rapido, adatto a computazioni complesse.
+Per spiegare in cosa consistono i livelli di attivazione è necessario comprendere le componenti "atomiche" di ogni rete neurale: i *neuroni*, che saranno però discussi più nel dettaglio in seguito. Ogni neurone possiede un insieme di ingressi privenienti da altri neuroni e un'uscita che a sua volta è passata in input ad altri neuroni. Questi hanno un livello di attivazione che definisce lo stato del neurone come acceso o spento dipendentemente dal tipo di funzione di attivazione che li caratterizza e dai suoi parametri. Mediante la regolazione di questi ultimi, infatti, si determina il comportamento dei neuroni e quindi la risposta della rete agli input.
 
 ###  3.2. <a name='Espansione'></a>Espansione
 
 Successivamente alla contrazione, dopo aver attraversato un nodo centrale, il tensore attraversa l'ultimo ramo della rete, in cui la sua dimensione viene ripristinata a quella iniziale passando attraverso i *decoder*.
 
-La simmetria della rete rende superflua una discussione approfondita dei decoder. Tuttavia questi ricevono in input non solo il tensore rappresentativo dell'immagine: infatti avviene anche una concatenazione tra encoder e decoder corrispondente (operanti allo stesso "livello") per inglobare anche l'informazione riguardante il contesto.
+La simmetria della rete rende superflua una discussione approfondita dei decoder. Tuttavia va osservato come questi ricevono in input non solo il tensore rappresentativo dell'immagine: infatti avviene anche una concatenazione tra encoder e decoder corrispondente (operanti allo stesso "livello") per inglobare anche l'informazione riguardante il contesto.
+
+\pagebreak
 
 ##  4. <a name='Idati'></a> I dati
 
-L'allenamento della rete richiede una grande mole di dati in input. Questo è un ostacolo, in quanto ad ogni immagine deve essere associata una maschera rappresentante le etichette non generabile in automatico (altrimenti avremmo già la soluzione della segmentazione e la costruzione della rete sarebbe inutile).
+L'allenamento della rete richiede una grande mole di dati in input. Questo è un ostacolo, in quanto ad ogni immagine deve essere associata una maschera rappresentante le etichette non generabile in automatico (altrimenti si avrebbe già la soluzione della segmentazione e la costruzione della rete sarebbe inutile).
 
 Il numero di dati necessari per il corretto allenamento è nell'ordine delle migliaia, questo per evitare che la rete finisca in *overfitting* e per renderla flessibile ai diversi input. L'*overfitting* avviene quando i dati di allenamento della rete sono troppo pochi o troppo simili e quindi la rete impara a rispondere in modo pressochè perfetto a casi già visti, ma non è in grado di gestirne di nuovi.
 
@@ -147,6 +168,8 @@ Ci sono molte altre modifiche possibili per migliorare le immagini, come riscala
 Ulteriore vantaggio dell'uso del generatore è la generazione contestuale delle *depth map* delle immagini, ossia la rappresentazione delle informazioni sulla tridimensionalità della mano mediante un'immagine ad un canale. Questa è un'informazione ulteriore che non viene fornita dalle normali fotocamere, ma che può essere generata comunque anche nella realtà mediante sensori appositi.
 
 ![depthmap](images_for_presentation/depthmap.jpg)
+
+\pagebreak
 
 ##  5. <a name='Allenamentodellarete'></a>Allenamento della rete
 
@@ -194,10 +217,12 @@ La loss function che è stata scelta in questo caso è la *Cross-Entropy dice lo
 
 A prescindere dalla scelta della funzione di loss, l'obiettivo sarà quello di minimizzarla per ridurre la discrepanza tra valore ottenuto e desiderato. Per far questo viene calcolato il gradiente della loss (calcolato rispetto ai suoi parametri) al fine di avvicinarsi al minimo della funzione. Il metodo della discesa del gradiente consiste nello spostarsi nella curva (della funzione) lungo la direzione di decrescita e permette di evitare il calcolo della derivata globale della funzione per l'individuazione dei punti di minimo. Lo spostamento lungo la curva rappresenta la modifica dei parametri, che avviene in modo proporzionale alla derivata parziale della loss.
 Questo sistema presenta però degli svantaggi: non c'è garanzia di trovare il minimo globale, infatti con questo sistema una volta situati in un punto di minimo locale non è possibile uscirne e vi sono difficoltà anche nell'attraversamento di plateau.
-//TODO immagine gradient descent
 
+La velocità di discesa può essere regolata mediante il *learning rate*, coefficiente che permette di velocizzare o rallentare l'apprendimento. Questo parametro ha anch'esso un suo peso e influisce sulle prestazioni della rete. Un learning rate alto aumenta la velocità di apprendimento, ma potrebbe mancare il minimo e creare oscillazioni intorno ad esso. Se il suo valore è basso invece si ottiene maggior precisione, ma il tempo per raggiungere il minimo è maggiore.
 
+![gradient_descent](images_for_presentation/gradient_descent.png)
 
+\pagebreak
 
 
 ##  6. <a name='Fonti'></a>Fonti
@@ -217,3 +242,5 @@ Questo sistema presenta però degli svantaggi: non c'è garanzia di trovare il m
 - AnatomyNet: Deep Learning for Fast and Fully Automated Whole-volume Segmentation of Head and Neck Anatomy - Wentao Zhu, Yufang Huang, Liang Zeng, Xuming Chen and Yong Liu, Zhen Qian, Nan Du and Wei Fan, Xiaohui Xie
 
 - Dice Loss Function for image Segmentation Using Dense Dilation Spatial Pooling Network, Qiuhua Liu, Min Fu
+
+- http://cs231n.github.io/convolutional-networks/

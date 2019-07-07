@@ -14,7 +14,7 @@ from keras import models
 parser = argparse.ArgumentParser()
 # TODO optimize parameters
 parser.add_argument("--epochs", type=int, default=20)
-parser.add_argument("--batch_size", type=int, default=1)
+parser.add_argument("--batch_size", type=int, default=15)
 parser.add_argument("--patience", type=int, default=10)
 
 args = parser.parse_args()
@@ -60,7 +60,7 @@ cp = tf.keras.callbacks.ModelCheckpoint(filepath=save_model_path, save_best_only
 # Callbacks
 
 # TODO: visualize learning via tensorboard (tensorboard --logdir 'tb/xxx' --port 6001)
-callbacktb = tf.keras.callbacks.TensorBoard(log_dir="tb",
+callbacktb = tf.keras.callbacks.TensorBoard(log_dir="tb",  # TODO custom directory for each train
                                             histogram_freq=0,
                                             write_graph=True,
                                             write_images=False,

@@ -1,8 +1,7 @@
 # Paths
 from paths import *
 
-# Tensorflow
-import tensorflow as tf
+# keras
 from keras import utils
 
 # Plots
@@ -11,12 +10,9 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import random
 
-import cv2
-
-# Uploads data from mat file to numpy array
+# Uploads data as numpy array
 # Reduce arrays sizes by reduce_images and reduction_factor
 # Returns features, labels as numpy arrays
-from scipy import ndimage
 
 
 def get_data(train_path_feat, val_path_feat, train_path_lab, val_path_lab,
@@ -27,7 +23,7 @@ def get_data(train_path_feat, val_path_feat, train_path_lab, val_path_lab,
     print("Imported train set features")
     validation_features = np.load(val_path_feat)
     print("Imported validation set features")
-    train_labels = np.load(train_path_lab)  # TODO verificare se serve .astype(int)
+    train_labels = np.load(train_path_lab)
     print("Imported train labels")
     validation_labels = np.load(val_path_lab)
     print("Imported validation labels")

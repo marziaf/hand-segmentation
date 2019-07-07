@@ -12,8 +12,6 @@ train_labels_path = op.join(sets_root_path, 'train_lab_processed.npy')
 # validation
 validation_features_path = op.join(sets_root_path, 'val_feat_processed.npy')
 validation_labels_path = op.join(sets_root_path, 'val_lab_processed.npy')
-
-
 # test sets
 test_features_path = op.join(sets_root_path, 'test_feat_processed.npy')
 test_labels_path = op.join(sets_root_path, 'test_lab_processed.npy')
