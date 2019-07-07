@@ -86,14 +86,6 @@ model.fit(x=train_f,
           callbacks=callbacks,
           shuffle=True)
 
-def print_summary(s):
-    with open(op.join(save_model_dir, "model_summary.txt"), 'w+') as f:
-        print(s, file=f)
-
-
-model.summary(print_fn=print_summary)
-
-
 
 # %% TODO: Evaluate performance  (sample code to modify)
 # y_hat = m.predict(x_test)

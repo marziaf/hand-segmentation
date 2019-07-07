@@ -103,7 +103,7 @@ def get_unet_model(img_shape):
     print("Decoders created")
 
     # Output
-    outputs = Conv2D(9, (1, 1), activation='softmax')(decoder0)
+    outputs = Conv2D(8, (1, 1), activation='softmax')(decoder0)  # 8 classi
 
     # Create model
     model = Model(inputs=[inputs], outputs=[outputs])

@@ -33,29 +33,30 @@
 
 Il progetto di segmentazione di una mano vede il suo fine in un più ampio contesto di riconoscimento gestuale, mirato al miglioramento dell'interazione uomo-macchina. Questo obiettivo richiede di passare attraverso l'identificazione delle diverse componenti della mano, per generare un input più stabile da fornire alla rete neurale per l'identificazione del gesto. In seguito, quindi, si tratterà della prima fase di questo più ampio progetto.
 
-![Esempio rgb](images_for_presentation/desired_rgb.jpg)
-![Esempio labels](images_for_presentation/desired_labels.jpg)
+![Esempio rgb](images_for_presentation/example_rgb.png)
+![Esempio depth](images_for_presentation/example_depth.png)
+![Esempio labels](images_for_presentation/example_labels.png)
 
-// TODO breve descrizione dei paragrafi a venire
+La trattazione sarà in primo luogo generale, mirata a descrivere il generico approccio ad un problema di segmentazione tramite reti neurali convoluzionali, e nella seconda parte andranno a descrivere più nel dettaglio le scelte implementative specifiche del caso.
 
+Si partirà con la discussione del problema della segmentazione semantica in generale, accennando agli specifici elementi che compongono le reti per poter discutere la scelta della tipologia della rete. Si dedicherà poi spazio alla discussione dei dati: le problematiche legate alla loro realizzazione e soluzioni alternative per una generazione numerosa. Infine verrà la trattazione più specifica delle scelte effettuate per risolvere il problema specifico.
 
 ##  2. <a name='Lareteneurale'></a>La rete neurale
 
-Il problema in questione rientra in ciò che in machine learning è definito *supervised learning*. Questo consiste nell'allenare una rete neurale fornendole campioni di input e corrispondenti output attesi fino a renderla in grado di risolvere problemi analoghi ma mai visti.
-
-L'output del caso in considerazione sarà ancora un'immagine come l'input, ma riportante le informazioni desiderate in uscita.
+Il problema in questione rientra in ciò che in machine learning è definito *supervised learning*. Questo consiste nell'allenare una rete neurale fornendole campioni di input e corrispondenti output attesi fino a renderla in grado di risolvere problemi analoghi ma nuovi. La procedura viene effettuata in due fasi temporalmente distinte: la prima di allenamento, computazionalmente onerosa e in cui la rete viene regolata per essere in grado di risolvere il problema, e la seconda di applicazione, in cui data la rete allenata è possibile ottenere l'output desiderato.
 
 ###  2.1. <a name='Ilproblemadellasegmentazionesemantica'></a>Il problema della segmentazione semantica
 
-L'input della rete è stabilito: si tratta di un'immagine di una mano fornita mediante le componenti RGB e una depth map, di cui si discuterà nel dettaglio nel seguito.
-L'output della rete è da stabilire, ma la scelta più naturale consiste nell'etichettare ogni singolo pixel e classificarlo assegnandogli un valore che porti con sè le informazioni desiderate. 
-Si rientra quindi in un problema di classificazione, o meglio, segmentazione semantica.
+L'input della rete è stabilito: si tratta di un'immagine di una mano fornita mediante le componenti RGB e una depth map, di cui si discuterà più nel dettaglio nel seguito.
+L'output della rete è da stabilire, ma la scelta più naturale consiste nell'etichettare ogni singolo pixel e *classificarlo* assegnandogli un valore che porti con sè le informazioni desiderate.
+Si rientra quindi in un problema di classificazione, o più nello specifico, segmentazione semantica.
 
-In generale il problema di classificazione consiste nel ridurre un vettore di ingresso ad una informazione di dimensione minore (uno scalare). Il ridimensionamento, e con esso il concentramento dell'informazione, avviene in diversi livelli consecutivi.
+In generale il problema di classificazione consiste nel ridurre un vettore di ingresso ad una informazione di dimensione minore (come uno scalare). Un esempio è il problema di classificazione di cifre scritte a mano: data un'immagine la rete deve essere in grado di riconoscere quale cifra rappresenta, fornendo un valore in uscita secondo una convenzione da stabilire (un intero, un vettore booleano...).
+Il ridimensionamento, e con esso il concentramento dell'informazione, avviene in diversi livelli consecutivi.
 
 ![classificazione](images_for_presentation/classification_problem.png)
 
-Questa procedura, tuttavia, non è adatta allo scopo qui trattato: infatti l'informazione a cui si vuol giungere non è di dimensione inferiore all'input e tantomeno scalare. Si ricorre quindi all'*upsampling*, che permette di ridistribuire l'informazione dopo averla concentrata.
+Questa procedura, tuttavia, non è adatta allo scopo qui trattato così come è stata presentata: infatti l'informazione a cui si vuol giungere non è di dimensione inferiore all'input e tantomeno scalare. Si ricorre quindi all'*upsampling*, che permette di ridistribuire l'informazione dopo averla concentrata.
 
 ![classificazione](images_for_presentation/deconvolution.jpg)
 
@@ -67,7 +68,8 @@ L'input dell'operazione di convoluzione consiste in una matrice tridimensionale 
 
 La funzione dei filtri, collezioni *kernel*, è quella di scorrere lungo la matrice in input, compiendo l'operazione di convoluzione e generando in output una matrice riportante una forma di compressione locale delle informazioni originali. Ogni kernel agisce in modo indipendente sul relativo canale dell'immagine e l'output del filtro è la combinazione di questi.
 
-L'output che viene generato ha dimensione *n<sub>out</sub>\*n<sub>out</sub>\*k*, che dipende dai due fattori: ![nout](images_for_presentation/nout_inline.png) dove *p* rappresenta la dimensione di *padding* della convoluzione e *s* lo *stride*.
+L'output che viene generato ha dimensione *n<sub>out</sub>\*n<sub>out</sub>\*k*, in cui n<sub>out</sub> risuta ![nout](images_for_presentation/nout_inline.png), dove *p* rappresenta la dimensione di *padding* della convoluzione e *s* lo *stride*.
+//TODO sostituire in latex
 
 ####  2.1.2. <a name='Maxpooling'></a>Max pooling
 
@@ -194,15 +196,6 @@ A prescindere dalla scelta della funzione di loss, l'obiettivo sarà quello di m
 Questo sistema presenta però degli svantaggi: non c'è garanzia di trovare il minimo globale, infatti con questo sistema una volta situati in un punto di minimo locale non è possibile uscirne e vi sono difficoltà anche nell'attraversamento di plateau.
 //TODO immagine gradient descent
 
-
-
-
-// TODO parlare di 
-backpropagation
-gradient descent
-differenza dati reali e artificiali
-parametri da scegliere
-...
 
 
 
