@@ -40,12 +40,17 @@ def get_data(train_path_feat, val_path_feat, train_path_lab, val_path_lab,
     if reduce_images:
         print("Reducing train_features")
         train_features = train_features[:int(num_img_train*reduction_factor), :, :, :]
+        print(train_features.shape)  # debug
         print("Reducing train_labels")
         train_labels = train_labels[:int(num_img_train*reduction_factor), :, :]
+        print(train_labels.shape)  # debug
         print("Reducing validation_features")
         validation_features = validation_features[:int(num_img_val * reduction_factor), :, :, :]
+        print(validation_features.shape)  # debug
         print("Reducing validation_labels")
         validation_labels = validation_labels[:int(num_img_val * reduction_factor), :, :]
+        print(validation_labels.shape)  # debug
+
 
     print("Cathegorizing labels")
     train_labels = utils.to_categorical(train_labels)

@@ -44,6 +44,14 @@ for i in range(0, int(set1.shape[0])):
         set1[i, :, :, :] = np.fliplr(set1[i, :, :, :])
         set2[i, :, :] = np.fliplr(set2[i, :, :])
 
+# Correct errors introduced by rotation
+for k in range(set1.shape[0]):
+    print("Correcting")
+    print(k)
+    for i in range(256):
+        for j in range(256):
+            if set2[k,i,j] >= 8:
+                set2[k,i,j] = set2[k,i-1,j]
 
 print("Now saving")
 
