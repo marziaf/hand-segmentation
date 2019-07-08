@@ -252,8 +252,7 @@ Una premessa ai risultati ottenuti è che le potenzialità della rete non sono s
 
 ### La struttura della rete
 
-L'aspetto finale della U-net (di cui non si riporta il grafico per motivi di spazio) è sintentizzato nel *summary* della rete:
-//TODO
+L'aspetto finale della U-net, ossia il *summary* del modello, poichè troppo lungo per essere inserito qui, si trova su github al link 
 
 ### SGD vs Adam
 
