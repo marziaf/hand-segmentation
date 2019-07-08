@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9c2a9f75-be79-4bf1-a8e3-ed64c96d01b2" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="9c2a9f75-be79-4bf1-a8e3-ed64c96d01b2" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,8 +16,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="62" column="60" selection-start-line="62" selection-start-column="60" selection-end-line="62" selection-end-column="60" />
+            <state relative-caret-position="495">
+              <caret line="84" column="20" lean-forward="true" selection-start-line="84" selection-start-column="20" selection-end-line="84" selection-end-column="20" />
               <folding>
                 <element signature="e#9#37#0" expanded="true" />
               </folding>
@@ -84,8 +82,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/myCallback.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="4" column="5" selection-start-line="4" selection-start-column="5" selection-end-line="4" selection-end-column="5" />
+            <state relative-caret-position="705">
+              <caret line="47" column="65" selection-start-line="47" selection-start-column="65" selection-end-line="47" selection-end-column="65" />
+              <folding>
+                <element signature="e#9#32#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -126,19 +127,19 @@
       <list>
         <option value="$PROJECT_DIR$/myMetrics.py" />
         <option value="$PROJECT_DIR$/main.py" />
-        <option value="$PROJECT_DIR$/myCallback.py" />
         <option value="$PROJECT_DIR$/pre-processing.py" />
         <option value="$PROJECT_DIR$/network.py" />
         <option value="$PROJECT_DIR$/data_generator.py" />
         <option value="$PROJECT_DIR$/test.py" />
         <option value="$PROJECT_DIR$/paths.py" />
         <option value="$PROJECT_DIR$/train.py" />
+        <option value="$PROJECT_DIR$/myCallback.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-37" />
-    <option name="y" value="56" />
+    <option name="x" value="-96" />
+    <option name="y" value="1239" />
     <option name="width" value="1280" />
     <option name="height" value="587" />
   </component>
@@ -349,7 +350,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="-1" width="1366" height="746" extended-state="6" />
+    <frame x="0" y="-1" width="1280" height="1024" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49196142" weight="0.06403574" />
@@ -366,7 +367,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.329582" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5026061" side_tool="true" weight="0.45659164" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.2909968" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.20111111" />
       <window_info anchor="bottom" id="Python Console" order="12" sideWeight="0.4973939" weight="0.61777776" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -460,20 +461,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/myMetrics.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="9" column="52" selection-start-line="9" selection-start-column="52" selection-end-line="9" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/myCallback.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="5" selection-start-line="4" selection-start-column="5" selection-end-line="4" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/paths.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
@@ -491,10 +478,27 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/myMetrics.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="9" column="52" selection-start-line="9" selection-start-column="52" selection-end-line="9" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/myCallback.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="705">
+          <caret line="47" column="65" selection-start-line="47" selection-start-column="65" selection-end-line="47" selection-end-column="65" />
+          <folding>
+            <element signature="e#9#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/train.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="62" column="60" selection-start-line="62" selection-start-column="60" selection-end-line="62" selection-end-column="60" />
+        <state relative-caret-position="495">
+          <caret line="84" column="20" lean-forward="true" selection-start-line="84" selection-start-column="20" selection-end-line="84" selection-end-column="20" />
           <folding>
             <element signature="e#9#37#0" expanded="true" />
           </folding>

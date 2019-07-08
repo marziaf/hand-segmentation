@@ -22,7 +22,7 @@ Firma studente Firma relatore
 		* 2.1.2. [Max pooling](#Maxpooling)
 * 3. [ U-Net](#U-Net)
 	* 3.1. [ Contrazione](#Contrazione)
-		* 3.1.1. [Funzioni di attivazione](#Funzionidiattivazione)
+		* 3.1.1. [ Funzioni di attivazione //TODO cosa ci fa qui? volevo dire altro?](#FunzionidiattivazioneTODOcosacifaquivolevodirealtro)
 	* 3.2. [Espansione](#Espansione)
 * 4. [ I dati](#Idati)
 	* 4.1. [Generazione dei dati sintetici](#Generazionedeidatisintetici)
@@ -33,7 +33,10 @@ Firma studente Firma relatore
 	* 5.2. [Inizializzazione dei parametri e funzioni di attivazione](#Inizializzazionedeiparametriefunzionidiattivazione)
 	* 5.3. [Feed forward](#Feedforward)
 	* 5.4. [Back-propagation](#Back-propagation)
-* 6. [Fonti](#Fonti)
+		* 5.4.1. [Gradient descent](#Gradientdescent)
+		* 5.4.2. [Varianti](#Varianti)
+* 6. [Risultati](#Risultati)
+* 7. [Fonti](#Fonti)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
@@ -53,7 +56,7 @@ Il progetto di segmentazione di una mano vede il suo fine in un più ampio conte
 
 La trattazione sarà in primo luogo generale, mirata a descrivere il generico approccio ad un problema di segmentazione tramite reti neurali convoluzionali, e nella seconda parte andranno a descrivere più nel dettaglio le scelte implementative specifiche del caso.
 
-Si partirà con la discussione del problema della segmentazione semantica in generale, accennando agli specifici elementi che compongono le reti per poter discutere la scelta della tipologia della rete. Si dedicherà poi spazio alla discussione dei dati: le problematiche legate alla loro realizzazione e soluzioni alternative per una generazione numerosa. Infine verrà la trattazione più specifica delle scelte effettuate per risolvere il problema specifico.
+Si partirà con la discussione del problema della segmentazione semantica in generale, accennando agli specifici elementi che compongono le reti per poter discutere la scelta della tipologia della rete. Si dedicherà poi spazio alla discussione dei dati: le problematiche legate alla loro realizzazione e soluzioni alternative per una generazione numerosa. Infine verrà la trattazione più specifica delle scelte effettuate per risolvere il problema specifico e un commento sui risultati ottenuti.
 
 Il codice sorgente è disponibile su github:
 
@@ -118,7 +121,7 @@ La prima parte della rete ad essere attraversata è quella di contrazione. Qui 4
 
 Un encoder è costituito da diversi livelli, tra cui di convoluzione, attivazione e pooling.
 
-####  3.1.1. <a name='Funzionidiattivazione'></a> Funzioni di attivazione //TODO cosa ci fa qui? volevo dire altro?
+####  3.1.1. <a name='FunzionidiattivazioneTODOcosacifaquivolevodirealtro'></a> Funzioni di attivazione //TODO cosa ci fa qui? volevo dire altro?
 
 Per spiegare in cosa consistono i livelli di attivazione è necessario comprendere le componenti "atomiche" di ogni rete neurale: i *neuroni*, che saranno però discussi più nel dettaglio in seguito. Ogni neurone possiede un insieme di ingressi privenienti da altri neuroni e un'uscita che a sua volta è passata in input ad altri neuroni. Questi hanno un livello di attivazione che definisce lo stato del neurone come acceso o spento dipendentemente dal tipo di funzione di attivazione che li caratterizza e dai suoi parametri. Mediante la regolazione di questi ultimi, infatti, si determina il comportamento dei neuroni e quindi la risposta della rete agli input.
 
@@ -215,17 +218,267 @@ Avviene ora la fase di correzione degli errori per approssimazioni successive. I
 La loss function che è stata scelta in questo caso è la *Cross-Entropy dice loss*. Questa deriva dalla *Cross Entropy* (CE) loss, funzione che misura le performance di una rete il cui output è una probabilità ed è quindi adatta alla rete qui utilizzata, in quanto l'output layer utilizza la softmax activation function. Questa loss misura l'entropia mutua tra il risultato ottenuto e quello atteso. Quello che ci si aspetta è che il valore dell'entropia mutua decresca ad ogni epoca (ciclo di allenamento della rete) e che quindi i risultati ottenuti siano sempre più fedeli a quelli attesi. Tuttavia questa metrica potrebbe portare a risultati falsati in questo caso, essendo le classi sbilanciate: tutte le immagini presentano la classe "sfondo" dominante su altre classi come "mignolo", in quanto lo sfondo occuperà molti più pixel nell'immagine rispetto ad altre classi. Utilizzare la CE loss potrebbe portare quindi a risultati sbilanciati, perciò occorre un fattore di correzione. Questo è costituito dalla dice loss // Formula dice loss, commento dice loss
 //TODO formule grafici CE
 
-A prescindere dalla scelta della funzione di loss, l'obiettivo sarà quello di minimizzarla per ridurre la discrepanza tra valore ottenuto e desiderato. Per far questo viene calcolato il gradiente della loss (calcolato rispetto ai suoi parametri) al fine di avvicinarsi al minimo della funzione. Il metodo della discesa del gradiente consiste nello spostarsi nella curva (della funzione) lungo la direzione di decrescita e permette di evitare il calcolo della derivata globale della funzione per l'individuazione dei punti di minimo. Lo spostamento lungo la curva rappresenta la modifica dei parametri, che avviene in modo proporzionale alla derivata parziale della loss.
-Questo sistema presenta però degli svantaggi: non c'è garanzia di trovare il minimo globale, infatti con questo sistema una volta situati in un punto di minimo locale non è possibile uscirne e vi sono difficoltà anche nell'attraversamento di plateau.
+####  5.4.1. <a name='Gradientdescent'></a>Gradient descent
 
-La velocità di discesa può essere regolata mediante il *learning rate*, coefficiente che permette di velocizzare o rallentare l'apprendimento. Questo parametro ha anch'esso un suo peso e influisce sulle prestazioni della rete. Un learning rate alto aumenta la velocità di apprendimento, ma potrebbe mancare il minimo e creare oscillazioni intorno ad esso. Se il suo valore è basso invece si ottiene maggior precisione, ma il tempo per raggiungere il minimo è maggiore.
+A prescindere dalla scelta della funzione di loss, l'obiettivo sarà quello di minimizzarla per ridurre la discrepanza tra valore ottenuto e desiderato. Per far questo viene calcolato il gradiente della loss (calcolato rispetto ai suoi parametri) al fine di avvicinarsi al minimo della funzione. Il metodo della discesa del gradiente consiste nello spostarsi nella curva (della funzione) lungo la direzione di decrescita e permette di evitare il calcolo della derivata globale della funzione per l'individuazione dei punti di minimo. Lo spostamento lungo la curva rappresenta la modifica dei parametri, che avviene in modo proporzionale alla derivata parziale della loss.
+Questo sistema presenta però degli svantaggi: non c'è garanzia di trovare il minimo globale, infatti con questo sistema una volta situati in un punto di minimo locale non è possibile uscirne e vi sono difficoltà anche nell'attraversamento di punti di sella.
+
+La velocità di discesa può essere regolata mediante il *learning rate*, coefficiente che permette di velocizzare o rallentare l'apprendimento. Questo parametro ha anch'esso un suo peso e influisce sulle prestazioni della rete. Un learning rate alto aumenta la velocità di apprendimento, ma potrebbe mancare il minimo e creare oscillazioni intorno ad esso. Per evitare questo fenomeno si può gradualmente ridurre il learning rate durante l'apprendimento. Se il suo valore è basso invece si ottiene maggior precisione, ma il tempo per raggiungere il minimo è maggiore.
 
 ![gradient_descent](images_for_presentation/gradient_descent.png)
 
+La discesa del gradiente si rappresenta come w → w' = w − η∇L //{TODO riscrivere bene} in cui w rappresenta le coordinate nello spazio dei pesi, w' la nuova posizione, L è la funzione da minimizzare (loss) e η il learning rate. Il segno meno è dovuto al fatto che la direzione di spostamento è quella indicata dall'opposto del gradiente, per opporsi alla direzione di massimo.
+
+Nonostante il metodo della discesa del gradiente sia già una grande semplificazione rispetto al calcolo analitico dei punti di minimo, lo si può ancora ottimizzare con metodi di *stochastic gradient descent* (SGD). Quando la funzione L si può esprimere come L(w) = 1/n sum(L_i) //{TODO scrivere in latex}, allora il gradiente si approssima con il gradiente calcolaro su un singolo addendo.
+w → w' = w − η∇L_i //{TODO latex}.
+
+Vi sono alcune estensioni di questo concetto che vengono qui accennate.
+
+####  5.4.2. <a name='Varianti'></a>Varianti
+
+*AdaGrad* (*adaptive gradient*) è un metodo che utilizza un tasso di apprendimento indipendente per ogni parametro. I suoi vantaggi sono la sua convergenza generalmente più rapida rispetto a SGD e la capacità di adattare in automatico il learning rate, tuttavia questo parametro tende a cancellarsi ad ogni iterazione, con conseguente arresto dell'apprendimento.
+
+*RMSProp* (*root mean square propagation*) è anch'esso un metodo a tasso di apprendimento adattivo, che però riesce a superare il problema dell'arresto dell'apprendimento introdotto da AdaGrad: il tasso di apprendimento viene controllato dalla media quadratica del gradiente. *AdaDelta* è invece un metodo simile con lo stesso punto di forza di RMSProp.
+
+*Adam* (*adaptive movement estimation*) è un'estensione di RMSProp, ed è un algoritmo di ottimizzazione del secondo ordine che incorpora anche l'Hessiano.
+
+Le ottimizzazioni che si fermano al primo ordine sono più facili da calcolare e impiegano meno tempo, al contrario gli ottimizzatori del secondo ordine sono più lenti.
+
 \pagebreak
 
+##  6. <a name='Risultati'></a>Risultati
 
-##  6. <a name='Fonti'></a>Fonti
+Una premessa ai risultati ottenuti è che le potenzialità della rete non sono state sfruttate al massimo a causa di problemi di memoria. Quindi, nonostante si siano raggiunti livelli di qualità sufficienti, probabilmente un allenamento più intensivo frutterebbe ancor meglio.
+
+### La struttura della rete
+
+L'aspetto finale della U-net (di cui non si riporta il grafico per motivi di spazio) è sintentizzato nel *summary* della rete:
+
+__________________________________________________________________________________________________
+Layer (type)                    Output Shape         Param #     Connected to
+==================================================================================================
+input_1 (InputLayer)            (None, 256, 256, 4)  0
+__________________________________________________________________________________________________
+conv2d_1 (Conv2D)               (None, 256, 256, 32) 1184        input_1[0][0]
+__________________________________________________________________________________________________
+batch_normalization_1 (BatchNor (None, 256, 256, 32) 128         conv2d_1[0][0]
+__________________________________________________________________________________________________
+activation_1 (Activation)       (None, 256, 256, 32) 0           batch_normalization_1[0][0]
+__________________________________________________________________________________________________
+conv2d_2 (Conv2D)               (None, 256, 256, 32) 9248        activation_1[0][0]
+__________________________________________________________________________________________________
+batch_normalization_2 (BatchNor (None, 256, 256, 32) 128         conv2d_2[0][0]
+__________________________________________________________________________________________________
+activation_2 (Activation)       (None, 256, 256, 32) 0           batch_normalization_2[0][0]
+__________________________________________________________________________________________________
+max_pooling2d_1 (MaxPooling2D)  (None, 128, 128, 32) 0           activation_2[0][0]
+__________________________________________________________________________________________________
+conv2d_3 (Conv2D)               (None, 128, 128, 64) 18496       max_pooling2d_1[0][0]
+__________________________________________________________________________________________________
+batch_normalization_3 (BatchNor (None, 128, 128, 64) 256         conv2d_3[0][0]
+__________________________________________________________________________________________________
+activation_3 (Activation)       (None, 128, 128, 64) 0           batch_normalization_3[0][0]
+__________________________________________________________________________________________________
+conv2d_4 (Conv2D)               (None, 128, 128, 64) 36928       activation_3[0][0]
+__________________________________________________________________________________________________
+batch_normalization_4 (BatchNor (None, 128, 128, 64) 256         conv2d_4[0][0]
+__________________________________________________________________________________________________
+activation_4 (Activation)       (None, 128, 128, 64) 0           batch_normalization_4[0][0]
+__________________________________________________________________________________________________
+max_pooling2d_2 (MaxPooling2D)  (None, 64, 64, 64)   0           activation_4[0][0]
+__________________________________________________________________________________________________
+conv2d_5 (Conv2D)               (None, 64, 64, 128)  73856       max_pooling2d_2[0][0]
+__________________________________________________________________________________________________
+batch_normalization_5 (BatchNor (None, 64, 64, 128)  512         conv2d_5[0][0]
+__________________________________________________________________________________________________
+activation_5 (Activation)       (None, 64, 64, 128)  0           batch_normalization_5[0][0]
+__________________________________________________________________________________________________
+conv2d_6 (Conv2D)               (None, 64, 64, 128)  147584      activation_5[0][0]
+__________________________________________________________________________________________________
+batch_normalization_6 (BatchNor (None, 64, 64, 128)  512         conv2d_6[0][0]
+__________________________________________________________________________________________________
+activation_6 (Activation)       (None, 64, 64, 128)  0           batch_normalization_6[0][0]
+__________________________________________________________________________________________________
+max_pooling2d_3 (MaxPooling2D)  (None, 32, 32, 128)  0           activation_6[0][0]
+__________________________________________________________________________________________________
+conv2d_7 (Conv2D)               (None, 32, 32, 256)  295168      max_pooling2d_3[0][0]
+__________________________________________________________________________________________________
+batch_normalization_7 (BatchNor (None, 32, 32, 256)  1024        conv2d_7[0][0]
+__________________________________________________________________________________________________
+activation_7 (Activation)       (None, 32, 32, 256)  0           batch_normalization_7[0][0]
+__________________________________________________________________________________________________
+conv2d_8 (Conv2D)               (None, 32, 32, 256)  590080      activation_7[0][0]
+__________________________________________________________________________________________________
+batch_normalization_8 (BatchNor (None, 32, 32, 256)  1024        conv2d_8[0][0]
+__________________________________________________________________________________________________
+activation_8 (Activation)       (None, 32, 32, 256)  0           batch_normalization_8[0][0]
+__________________________________________________________________________________________________
+max_pooling2d_4 (MaxPooling2D)  (None, 16, 16, 256)  0           activation_8[0][0]
+__________________________________________________________________________________________________
+conv2d_9 (Conv2D)               (None, 16, 16, 512)  1180160     max_pooling2d_4[0][0]
+__________________________________________________________________________________________________
+batch_normalization_9 (BatchNor (None, 16, 16, 512)  2048        conv2d_9[0][0]
+__________________________________________________________________________________________________
+activation_9 (Activation)       (None, 16, 16, 512)  0           batch_normalization_9[0][0]
+__________________________________________________________________________________________________
+conv2d_10 (Conv2D)              (None, 16, 16, 512)  2359808     activation_9[0][0]
+__________________________________________________________________________________________________
+batch_normalization_10 (BatchNo (None, 16, 16, 512)  2048        conv2d_10[0][0]
+__________________________________________________________________________________________________
+activation_10 (Activation)      (None, 16, 16, 512)  0           batch_normalization_10[0][0]
+__________________________________________________________________________________________________
+max_pooling2d_5 (MaxPooling2D)  (None, 8, 8, 512)    0           activation_10[0][0]
+__________________________________________________________________________________________________
+conv2d_11 (Conv2D)              (None, 8, 8, 1024)   4719616     max_pooling2d_5[0][0]
+__________________________________________________________________________________________________
+batch_normalization_11 (BatchNo (None, 8, 8, 1024)   4096        conv2d_11[0][0]
+__________________________________________________________________________________________________
+activation_11 (Activation)      (None, 8, 8, 1024)   0           batch_normalization_11[0][0]
+__________________________________________________________________________________________________
+conv2d_12 (Conv2D)              (None, 8, 8, 1024)   9438208     activation_11[0][0]
+__________________________________________________________________________________________________
+batch_normalization_12 (BatchNo (None, 8, 8, 1024)   4096        conv2d_12[0][0]
+__________________________________________________________________________________________________
+activation_12 (Activation)      (None, 8, 8, 1024)   0           batch_normalization_12[0][0]
+__________________________________________________________________________________________________
+conv2d_transpose_1 (Conv2DTrans (None, 16, 16, 512)  2097664     activation_12[0][0]
+__________________________________________________________________________________________________
+concatenate_1 (Concatenate)     (None, 16, 16, 1024) 0           activation_10[0][0]
+                                                                 conv2d_transpose_1[0][0]
+__________________________________________________________________________________________________
+batch_normalization_13 (BatchNo (None, 16, 16, 1024) 4096        concatenate_1[0][0]
+__________________________________________________________________________________________________
+activation_13 (Activation)      (None, 16, 16, 1024) 0           batch_normalization_13[0][0]
+__________________________________________________________________________________________________
+conv2d_13 (Conv2D)              (None, 16, 16, 512)  4719104     activation_13[0][0]
+__________________________________________________________________________________________________
+batch_normalization_14 (BatchNo (None, 16, 16, 512)  2048        conv2d_13[0][0]
+__________________________________________________________________________________________________
+activation_14 (Activation)      (None, 16, 16, 512)  0           batch_normalization_14[0][0]
+__________________________________________________________________________________________________
+conv2d_14 (Conv2D)              (None, 16, 16, 512)  2359808     activation_14[0][0]
+__________________________________________________________________________________________________
+batch_normalization_15 (BatchNo (None, 16, 16, 512)  2048        conv2d_14[0][0]
+__________________________________________________________________________________________________
+activation_15 (Activation)      (None, 16, 16, 512)  0           batch_normalization_15[0][0]
+__________________________________________________________________________________________________
+conv2d_transpose_2 (Conv2DTrans (None, 32, 32, 256)  524544      activation_15[0][0]
+__________________________________________________________________________________________________
+concatenate_2 (Concatenate)     (None, 32, 32, 512)  0           activation_8[0][0]
+                                                                 conv2d_transpose_2[0][0]
+__________________________________________________________________________________________________
+batch_normalization_16 (BatchNo (None, 32, 32, 512)  2048        concatenate_2[0][0]
+__________________________________________________________________________________________________
+activation_16 (Activation)      (None, 32, 32, 512)  0           batch_normalization_16[0][0]
+__________________________________________________________________________________________________
+conv2d_15 (Conv2D)              (None, 32, 32, 256)  1179904     activation_16[0][0]
+__________________________________________________________________________________________________
+batch_normalization_17 (BatchNo (None, 32, 32, 256)  1024        conv2d_15[0][0]
+__________________________________________________________________________________________________
+activation_17 (Activation)      (None, 32, 32, 256)  0           batch_normalization_17[0][0]
+__________________________________________________________________________________________________
+conv2d_16 (Conv2D)              (None, 32, 32, 256)  590080      activation_17[0][0]
+__________________________________________________________________________________________________
+batch_normalization_18 (BatchNo (None, 32, 32, 256)  1024        conv2d_16[0][0]
+__________________________________________________________________________________________________
+activation_18 (Activation)      (None, 32, 32, 256)  0           batch_normalization_18[0][0]
+__________________________________________________________________________________________________
+conv2d_transpose_3 (Conv2DTrans (None, 64, 64, 128)  131200      activation_18[0][0]
+__________________________________________________________________________________________________
+concatenate_3 (Concatenate)     (None, 64, 64, 256)  0           activation_6[0][0]
+                                                                 conv2d_transpose_3[0][0]
+__________________________________________________________________________________________________
+batch_normalization_19 (BatchNo (None, 64, 64, 256)  1024        concatenate_3[0][0]
+__________________________________________________________________________________________________
+activation_19 (Activation)      (None, 64, 64, 256)  0           batch_normalization_19[0][0]
+__________________________________________________________________________________________________
+conv2d_17 (Conv2D)              (None, 64, 64, 128)  295040      activation_19[0][0]
+__________________________________________________________________________________________________
+batch_normalization_20 (BatchNo (None, 64, 64, 128)  512         conv2d_17[0][0]
+__________________________________________________________________________________________________
+activation_20 (Activation)      (None, 64, 64, 128)  0           batch_normalization_20[0][0]
+__________________________________________________________________________________________________
+conv2d_18 (Conv2D)              (None, 64, 64, 128)  147584      activation_20[0][0]
+__________________________________________________________________________________________________
+batch_normalization_21 (BatchNo (None, 64, 64, 128)  512         conv2d_18[0][0]
+__________________________________________________________________________________________________
+activation_21 (Activation)      (None, 64, 64, 128)  0           batch_normalization_21[0][0]
+__________________________________________________________________________________________________
+conv2d_transpose_4 (Conv2DTrans (None, 128, 128, 64) 32832       activation_21[0][0]
+__________________________________________________________________________________________________
+concatenate_4 (Concatenate)     (None, 128, 128, 128 0           activation_4[0][0]
+                                                                 conv2d_transpose_4[0][0]
+__________________________________________________________________________________________________
+batch_normalization_22 (BatchNo (None, 128, 128, 128 512         concatenate_4[0][0]
+__________________________________________________________________________________________________
+activation_22 (Activation)      (None, 128, 128, 128 0           batch_normalization_22[0][0]
+__________________________________________________________________________________________________
+conv2d_19 (Conv2D)              (None, 128, 128, 64) 73792       activation_22[0][0]
+__________________________________________________________________________________________________
+batch_normalization_23 (BatchNo (None, 128, 128, 64) 256         conv2d_19[0][0]
+__________________________________________________________________________________________________
+activation_23 (Activation)      (None, 128, 128, 64) 0           batch_normalization_23[0][0]
+__________________________________________________________________________________________________
+conv2d_20 (Conv2D)              (None, 128, 128, 64) 36928       activation_23[0][0]
+__________________________________________________________________________________________________
+batch_normalization_24 (BatchNo (None, 128, 128, 64) 256         conv2d_20[0][0]
+__________________________________________________________________________________________________
+activation_24 (Activation)      (None, 128, 128, 64) 0           batch_normalization_24[0][0]
+__________________________________________________________________________________________________
+conv2d_transpose_5 (Conv2DTrans (None, 256, 256, 32) 8224        activation_24[0][0]
+__________________________________________________________________________________________________
+concatenate_5 (Concatenate)     (None, 256, 256, 64) 0           activation_2[0][0]
+                                                                 conv2d_transpose_5[0][0]
+__________________________________________________________________________________________________
+batch_normalization_25 (BatchNo (None, 256, 256, 64) 256         concatenate_5[0][0]
+__________________________________________________________________________________________________
+activation_25 (Activation)      (None, 256, 256, 64) 0           batch_normalization_25[0][0]
+__________________________________________________________________________________________________
+conv2d_21 (Conv2D)              (None, 256, 256, 32) 18464       activation_25[0][0]
+__________________________________________________________________________________________________
+batch_normalization_26 (BatchNo (None, 256, 256, 32) 128         conv2d_21[0][0]
+__________________________________________________________________________________________________
+activation_26 (Activation)      (None, 256, 256, 32) 0           batch_normalization_26[0][0]
+__________________________________________________________________________________________________
+conv2d_22 (Conv2D)              (None, 256, 256, 32) 9248        activation_26[0][0]
+__________________________________________________________________________________________________
+batch_normalization_27 (BatchNo (None, 256, 256, 32) 128         conv2d_22[0][0]
+__________________________________________________________________________________________________
+activation_27 (Activation)      (None, 256, 256, 32) 0           batch_normalization_27[0][0]
+__________________________________________________________________________________________________
+conv2d_23 (Conv2D)              (None, 256, 256, 8)  264         activation_27[0][0]
+==================================================================================================
+Total params: 31,127,016
+Trainable params: 31,111,016
+Non-trainable params: 16,000
+__________________________________________________________________________________________________
+//TODO deve stare in una pagina
+
+### SGD vs Adam
+
+Un primo confronto è stato effettuato tra due metodi di ottimizzazione del gradiente: stochastic gradient descent e Adam. I risultati ottenuti, con un allenamento sul 50% dei dati (770 immagini di allenamento, 220 per la validazione), batch size di 1, allenando la rete su 20 epoche, confermano la teoria: Adam è un algoritmo più performante di SGD. Questo si vede nei dati di allenamento, di cui sono riportati i grafici della accuratezza e della loss in funzione dei batch. Si vede come le curve blu, che rappresentano il training con SGD, rappresentino risultati più scarsi rispetto alle arancioni di Adam.
+
+![adam_vs_sgd_loss](images_for_presentation/batch_acc_ora3_blu4.png)
+![adam_vs_sgd_loss](images_for_presentation/batch_loss_ora3_blu4.png)
+
+Anche visivamente, utilizzando il set di test per controllare l'output della rete con il solo ingresso dell'immagine rgbd, si nota la differenza.
+
+Adam:
+![adam_vs_sgd_loss](images_for_presentation/test_3_best.png)
+SGD:
+![adam_vs_sgd_loss](images_for_presentation/test_4.png)
+
+
+
+
+
+// TODO optimizers (adam, adadelta...) + learning rate
+regularization
+early stopping
+
+\pagebreak
+
+##  7. <a name='Fonti'></a>Fonti
 
 - Natural Networks and Deep Learning - Michael Nielsen
 
@@ -241,6 +494,10 @@ La velocità di discesa può essere regolata mediante il *learning rate*, coeffi
 
 - AnatomyNet: Deep Learning for Fast and Fully Automated Whole-volume Segmentation of Head and Neck Anatomy - Wentao Zhu, Yufang Huang, Liang Zeng, Xuming Chen and Yong Liu, Zhen Qian, Nan Du and Wei Fan, Xiaohui Xie
 
-- Dice Loss Function for image Segmentation Using Dense Dilation Spatial Pooling Network, Qiuhua Liu, Min Fu
+- Dice Loss Function for image Segmentation Using Dense Dilation Spatial Pooling Network - Qiuhua Liu, Min Fu
+
+- Adam: A Method for Stochastic Optimization - Diederik P. Kingma, Jimmy Lei Ba
+
+- Large-Scale Machine Learning with Stochastic Gradient Descent - Léon Bottou
 
 - http://cs231n.github.io/convolutional-networks/

@@ -2,7 +2,7 @@
 
 # TODO
 from myMetrics import *
-from Utils import *
+#from Utils import *
 from tqdm import tqdm
 from tensorflow.python.keras.callbacks import Callback
 from tensorflow.python.keras import backend
@@ -45,7 +45,7 @@ class CallbackmIoU(Callback):
                 labels = labels.astype(np.uint8)
 
                 tmp = confusion_matrix(seg.flatten(), labels.flatten(),
-                                       [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]) # class labels
+                                       [0, 1, 2, 3, 4, 5, 6, 7, 8])  # class labels
                 mat = mat + tmp
 
             iou = compute_and_print_IoU_per_class(confusion_matrix=mat, num_classes=21)
