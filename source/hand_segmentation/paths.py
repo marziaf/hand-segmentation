@@ -15,9 +15,13 @@ validation_labels_path = op.join(sets_root_path, 'val_lab_processed.npy')
 # test sets
 test_features_path = op.join(sets_root_path, 'test_feat_processed.npy')
 test_labels_path = op.join(sets_root_path, 'test_lab_processed.npy')
+
 # output model paths
 model_id = 'new_train_try'
 save_model_dir = op.join(project_root_path, 'models')
 save_model_path = op.join(save_model_dir, model_id+'.hdf5')  # TODO check existing files and name progressively
+
+# tensorboard path
+tb_path = op.join(project_root_path, 'tb', model_id)
 # test image outputs
-save_output_images_path = op.join(project_root_path, 'outputs/', model_id)
+save_output_images_path = op.join(project_root_path, 'outputs', model_id)

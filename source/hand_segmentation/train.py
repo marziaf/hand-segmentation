@@ -60,7 +60,7 @@ cp = tf.keras.callbacks.ModelCheckpoint(filepath=save_model_path, save_best_only
 # Callbacks
 
 # TODO: visualize learning via tensorboard (tensorboard --logdir 'tb/xxx' --port 6001)
-callbacktb = tf.keras.callbacks.TensorBoard(log_dir="tb",  # TODO custom directory for each train
+callbacktb = tf.keras.callbacks.TensorBoard(log_dir=tb_path,
                                             histogram_freq=0,
                                             write_graph=True,
                                             write_images=False,
