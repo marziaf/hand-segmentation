@@ -20,7 +20,7 @@ model = models.load_model(model_path, custom_objects={'ce_dice_loss': ce_dice_lo
 # %% Image acquisition
 print("Getting test images")
 test_features = np.load(model_path)
-test_features = test_features[:30]  # TODO remove if memory saving is not needed
+test_features = test_features[:2]  # TODO remove if memory saving is not needed
 # test_labels = np.load(test_features_path)
 # print("Getting categorical version of labels")
 # test_labels = utils.to_categorical(test_labels)
@@ -30,6 +30,8 @@ test_features = test_features[:30]  # TODO remove if memory saving is not needed
 # Prediction
 print("Predicting labels")
 prediction = model.predict(test_features)
+
+print(prediction.shape)
 
 # TODO aggiungere metriche oggettive per la valutazione
 

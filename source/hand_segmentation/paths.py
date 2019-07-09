@@ -21,6 +21,9 @@ model_id = 'new_train_try'
 save_model_dir = op.join(project_root_path, 'models')
 save_model_path = op.join(save_model_dir, model_id+'.hdf5')  # TODO check existing files and name progressively
 
+# output results path
+output_results_dir = op.join(data_root_path, "results")
+
 # tensorboard path
 tb_path = op.join(project_root_path, 'tb', model_id)
 # test image outputs
