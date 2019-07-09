@@ -19,8 +19,8 @@ print("Loading model")
 model = models.load_model(model_path, custom_objects={'ce_dice_loss': ce_dice_loss})
 # %% Image acquisition
 print("Getting test images")
-test_features = np.load(model_path)
-test_features = test_features[:2]  # TODO remove if memory saving is not needed
+test_features = np.load(test_features_path)
+test_features = test_features[:15]  # TODO remove if memory saving is not needed
 # test_labels = np.load(test_features_path)
 # print("Getting categorical version of labels")
 # test_labels = utils.to_categorical(test_labels)
@@ -37,4 +37,6 @@ print(prediction.shape)
 
 # del model  # TODO use if needed to free memory
 
-disp_some_data(test_features, prediction, save_image=True, fig_size=20)
+disp_some_data(test_features, prediction, fig_size=20)
+
+input()
